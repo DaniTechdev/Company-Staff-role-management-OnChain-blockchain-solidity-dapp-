@@ -1,11 +1,19 @@
 import "../styles/globals.css";
 
-//INTERNAL IMPORT
+//INTERNAL IMPORTManagementProvider
 
-const MyApp = ({ Component, pageProps }) => (
-  <div>
-    <Component {...pageProps} />
-  </div>
-);
+import { ManagementProvider } from "../context/ManagementContext";
+
+const MyApp = ({ Component, pageProps }) => {
+  return (
+    <>
+      <ManagementProvider>
+        <div>
+          <Component {...pageProps} />
+        </div>
+      </ManagementProvider>
+    </>
+  );
+};
 
 export default MyApp;

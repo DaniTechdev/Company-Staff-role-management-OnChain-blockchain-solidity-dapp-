@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createContext } from "react";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
 
@@ -52,15 +52,22 @@ export const ManagementProvider = ({ children }) => {
   };
 
   //function to for manager to register staff
-  const registerStaff = async (staffAddress, staffName) => {
+  const registerStaff = async (user) => {
+    const { name, address, gender } = user;
+
+    console.log("staffAddress", address, "name", name, "gender", gender);
+
     try {
       const provider = await providerSigner();
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
+      console.log("Contract", contract);
+
       const registeredStaff = await contract.registerStaff(
-        staffAddress,
-        staffName
+        address,
+        name,
+        gender
       );
 
       registeredStaff.wait();
@@ -105,6 +112,57 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
+  const getRegStaffDetails = async (userAddress) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      const getRegStaff = await contract.getStaffDetails(userAddress);
+
+      // console.log("getRegStaff", getRegStaff);
+
+      return getRegStaff;
+    } catch (error) {
+      console.log("Error in getting registered users");
+    }
+  };
+
+  const getAllregStaff = async () => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      console.log("contract", contract);
+
+      let userList = [];
+
+      const staffAddrrArray = await contract.getAllRegisteredAddress();
+      // const staffAddrCount = await contract.userAddsressCount();
+      console.log("staffAddrrArray", staffAddrrArray);
+
+      for (let i = 0; i < staffAddrrArray.length; i++) {
+        const staffAddress = staffAddrrArray[i];
+        console.log("staffAddress", staffAddress);
+
+        const staffDetails = await getRegStaffDetails(staffAddress);
+        userList.push(staffDetails);
+      }
+
+      console.log("userList", userList);
+
+      return userList;
+    } catch (error) {
+      console.log("Error in getting all registered staff");
+    }
+  };
+
+  // getAllregStaff();
+
+  // getRegStaffDetails("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+
+  const textName = "My name is NATOCHI";
   return (
     <ManagementContext.Provider
       value={{
@@ -114,6 +172,10 @@ export const ManagementProvider = ({ children }) => {
         currentAccount,
         balance,
         registerStaff,
+        asynRoleToStaff,
+        textName,
+        getRegStaffDetails,
+        getAllregStaff,
       }}
     >
       {children}

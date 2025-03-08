@@ -14,6 +14,7 @@ contract CompanyManagement {
         uint256[] roleIds;
         uint256 registeredAt; // Timestamp when staff is registered
         address staffAddress;
+        string gender;
     }
 
     struct Role {
@@ -51,18 +52,20 @@ contract CompanyManagement {
     }
 
     // Register a new staff (only manager)
-    function registerStaff(address staffAddress, string memory name) public onlyManager {
-        require(staffList[staffAddress].tokensEarned == 0, "Staff already registered");
+    function registerStaff(address staffAddress, string memory name, string memory gender) public onlyManager {
+        // require(staffList[staffAddress].tokensEarned == 0, "Staff already registered");
+        require(staffList[staffAddress].registeredAt == 0, "Staff already registered");
         staffList[staffAddress] = Staff({
             name: name,
             tokensEarned: 0,
             roleIds: new uint256[](0),
             registeredAt: block.timestamp, // Set registration timestamp
-            staffAddress: staffAddress;
+            staffAddress: staffAddress,
+            gender:gender
 
         });
 
-        registeredStaffAddress.push(msg.sender);
+        registeredStaffAddress.push(staffAddress);
         emit StaffRegistered(staffAddress, name);
     }
 
@@ -100,6 +103,8 @@ contract CompanyManagement {
         emit SignalSent(signalCount, roleId, msg.sender, signalType);
     }
 
+
+
     // Manager updates the status of a role (only manager)
     function updateRoleStatusByManager(uint256 roleId, string memory newStatus) public onlyManager {
         Role storage role = roles[roleId];
@@ -122,7 +127,7 @@ contract CompanyManagement {
         emit TokensDistributed(staffAddress, roles[roleId].tokenReward);
     }
 
-    // Get details of a staff member
+    // Get details of a staff member by the manager
     function getStaffDetails(address staffAddress) public view returns (Staff memory) {
         return staffList[staffAddress];
     }
@@ -142,16 +147,24 @@ contract CompanyManagement {
     }
 
 
+   
+
     function userAllRoles (address userAddress, uint256 roleId) public returns (Role[] memory){
 
         //create new array for save all the individuals roles data
-      uint256[] storage userRoleIdsList= staff[userAddress].roleIds;
+      uint256[] storage userRoleIdsList= staffList[userAddress].roleIds;
         //Get the particular user and then access the RoleIds associated to the user
-         Role[] memory userRoleList = new Role[](userRoleIdsList.length)
+         Role[] memory userRoleList = new Role[](userRoleIdsList.length);
 
       for(uint256 i= 0; i< userRoleIdsList.length; i++){
-        userRoleList.push( roleSignals[i]);
+
+        uint256  userRoleId = userRoleIdsList[i];
+        Role storage role = roles[userRoleId];
+
+        userRoleList[i]= role;
       }
+
+      return userRoleList;
 
     }
 }

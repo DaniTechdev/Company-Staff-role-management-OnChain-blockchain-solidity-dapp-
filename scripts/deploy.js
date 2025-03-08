@@ -16,7 +16,7 @@ async function main() {
 
   console.log("Lock with 1 ETH deployed to:", Companymanagement.address);
 
-  console.log("Companymanagement", Companymanagement);
+  // console.log("Companymanagement", Companymanagement);
 }
 
 main().catch((error) => {

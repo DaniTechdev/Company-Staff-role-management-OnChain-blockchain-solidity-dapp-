@@ -1,0 +1,159 @@
+.container {
+  width: 100%;
+  color: white;
+}
+
+.container nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: black;
+  padding: 30px;
+}
+
+.container2 {
+  width: 100%;
+  background-color: rgb(45, 41, 41);
+  display: flex;
+  height: 100vh;
+  /* height: fit-content; */
+}
+.leftbar {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  /* background-color: rgb(51, 46, 46); */
+  /* background-color: rgb(48, 118, 90); */
+  background-color: rgb(69, 61, 61);
+
+  gap: 30px;
+  align-content: end;
+  height: fit-content;
+  padding: 10px;
+}
+
+.leftbar div {
+  width: 98%;
+  cursor: pointer;
+}
+
+.leftbar div button {
+  text-align: center;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: medium;
+}
+
+.leftbar div button:hover {
+  background-color: antiquewhite;
+  font-weight: 500;
+}
+
+.hanburger_menu {
+  display: none;
+}
+.hanbuger_icon {
+  display: none;
+}
+
+.ModalModel {
+  display: none;
+}
+
+@media screen and (max-width: 426px) {
+  .container {
+    position: relative;
+  }
+  .container nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: black;
+    padding: 10px;
+  }
+  .container nav h1 {
+    font-size: 15px;
+  }
+  .container2 {
+    width: 100%;
+    background-color: rgb(45, 41, 41);
+    display: flex;
+    height: 100vh;
+    /* height: fit-content; */
+  }
+
+  .leftbar {
+    display: none;
+  }
+
+  .leftbar button {
+    display: none;
+  }
+  /* .container2 {
+    display: block;
+    background-color: rgb(45, 41, 41);
+  } */
+
+  /* .leftbar {
+    display: none;
+  } */
+
+  .hanburger_menu {
+    display: block;
+  }
+  .hanbuger_icon {
+    display: block;
+  }
+
+  .container nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ModalModel {
+    display: block;
+  }
+
+  .container2_mob {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 54%;
+    background-color: rgb(97, 104, 110, 0.2);
+  }
+
+  .mob_lists {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: rgb(51, 46, 46);
+    gap: 30px;
+    align-content: end;
+    height: fit-content;
+
+    padding: 10px;
+  }
+  .mob_lists div {
+    width: 98%;
+    cursor: pointer;
+  }
+
+  .mob_lists div button {
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 10px;
+  }
+  /* .container nav div {
+    display: none;
+  } */
+}
+
+@media screen and (max-width: 376px) {
+}

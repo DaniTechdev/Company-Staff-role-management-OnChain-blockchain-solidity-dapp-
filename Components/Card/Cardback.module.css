@@ -1,0 +1,63 @@
+.container {
+  /* background-color: blue; */
+  width: 70%;
+  margin-top: 10px;
+  overflow-y: scroll;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* align-items: center; */
+  justify-content: center;
+  gap: 15px;
+}
+
+.containerCard {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  width: 100%;
+  border: 1px solid rgb(128, 128, 128, 0.5);
+  position: relative;
+  border-radius: 8px;
+  margin-left: 20px;
+  background-color: rgb(128, 128, 128, 0.2);
+  height: fit-content;
+}
+
+.imgCard {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border-radius: 50%;
+}
+
+.imgCard1 {
+  border-radius: 50%;
+}
+.containerCard h1 {
+  margin-top: 15px;
+  /* font-size: 10px; */
+  margin-left: 30px;
+}
+.CardComponent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  margin-top: 1px;
+}
+
+.CardComponent div {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid rgb(128, 128, 128, 0.5);
+  padding: 15px;
+  align-items: center;
+  /* justify-content: center; */
+  text-align: center;
+}
+
+.CardComponent p {
+  text-align: center;
+}
