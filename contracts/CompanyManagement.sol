@@ -24,6 +24,7 @@ contract CompanyManagement {
         uint256 createdAt; // Timestamp when role is created
         uint256 pendingAt; // Timestamp when role is marked as pending
         uint256 completedAt; // Timestamp when role is marked as completed
+        address roleAsignedTo;
     }
 
     struct Signal {
@@ -78,7 +79,8 @@ contract CompanyManagement {
             tokenReward: tokenReward,
             createdAt: block.timestamp, // Role creation time
             pendingAt: block.timestamp, // Role is initially pending
-            completedAt: 0 // Role is not completed yet
+            completedAt: 0 ,// Role is not completed yet
+            roleAsignedTo:staffList[staffAddress].staffAddress
         });
         staffList[staffAddress].roleIds.push(roleCount);
         emit RoleAssigned(staffAddress, roleCount, roleName);

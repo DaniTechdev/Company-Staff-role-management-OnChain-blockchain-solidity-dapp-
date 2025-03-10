@@ -43,9 +43,10 @@ const Card = ({ StaffData, allStaffData }) => {
           <tr>
             <th className={Style.table_th}>Unique ID</th>
             <th className={Style.table_th}>Staff name</th>
+            <th className={Style.table_th}>Earned Token</th>
             <th className={Style.table_th}>staff address</th>
             <th className={Style.table_th_mdremove}>gender</th>
-            <th className={Style.table_th_mdremove}>role count</th>
+            <th className={Style.table_th}>role count</th>
             <th className={Style.table_th}></th>
           </tr>
         </thead>
@@ -56,8 +57,12 @@ const Card = ({ StaffData, allStaffData }) => {
                 <td className={Style.table_th}>
                   <p>{index + 1}</p>
                 </td>
+
                 <td className={Style.table_th}>
                   <p>{staff.name}</p>
+                </td>
+                <td className={Style.table_th}>
+                  <p>{staff.tokensEarned.toNumber()}</p>
                 </td>
                 <td className={Style.table_th}>
                   <p>{staff.staffAddress.slice(0, 9)}...</p>
@@ -65,8 +70,8 @@ const Card = ({ StaffData, allStaffData }) => {
                 <td className={Style.table_th_mdremove}>
                   <p>{staff.gender}</p>
                 </td>
-                <td className={Style.table_th_mdremove}>
-                  <p>1</p>
+                <td className={Style.table_th}>
+                  <p>{staff.roleIds.length}</p>
                 </td>
                 <td className={Style.table_th}>
                   <button>See details</button>

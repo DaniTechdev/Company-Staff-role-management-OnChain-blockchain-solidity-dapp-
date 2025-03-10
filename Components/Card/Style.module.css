@@ -91,6 +91,9 @@
   border: 1px solid gray;
   padding: 5px;
 }
+.table_th_mdremove {
+  display: none;
+}
 
 @media screen and (max-width: 426px) {
   .table_th_mdremove {

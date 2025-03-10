@@ -12,11 +12,13 @@ import { ManagementContext } from "../context/ManagementContext";
 import managerAccount from "../context/constant";
 import Forms from "../Components/Form/Form";
 import Card from "../Components/Card/Card";
+import RoleForm from "../Components/RoleForm/RoleForm";
 
 const manager = () => {
   const [index, setindex] = useState(null);
   const [openHandburger, setopenHandburger] = useState(false);
   const [allStaffData, setallStaffData] = useState();
+  const [allStaffRoles, setallStaffRoles] = useState();
   // console.log("StaffData", StaffData);
 
   // console.log("All staff Data", allStaffData);
@@ -29,13 +31,16 @@ const manager = () => {
 
   useEffect(() => {
     const getStaffData = getAllregStaff();
+    const allStaffRole = getAllRoles();
 
-    console.log("getStaffData", getStaffData);
+    // console.log("getStaffData", getStaffData);
 
-    console.log("Get all getCampaignsData", getStaffData);
+    // console.log("Get all getCampaignsData", getStaffData);
 
     return async () => {
+      const allRoleData = await allStaffRole;
       const allData = await getStaffData;
+      setallStaffRoles(allRoleData);
       setallStaffData(allData);
     };
   }, []);
@@ -48,6 +53,7 @@ const manager = () => {
     registerStaff,
     asynRoleToStaff,
     getAllregStaff,
+    getAllRoles,
   } = useContext(ManagementContext);
 
   useEffect(() => {
@@ -86,6 +92,11 @@ const manager = () => {
           <Forms registerStaff={registerStaff} setindex={index} />
         ) : index == 2 ? (
           <Card StaffData={StaffData} allStaffData={allStaffData} />
+        ) : index == 3 ? (
+          <RoleForm
+            asynRoleToStaff={asynRoleToStaff}
+            allStaffRoles={allStaffRoles}
+          />
         ) : (
           ""
         )}

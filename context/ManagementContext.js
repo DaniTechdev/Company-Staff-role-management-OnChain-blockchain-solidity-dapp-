@@ -80,21 +80,42 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
-  const asynRoleToStaff = async (staffAddress, roleName, rewardToken) => {
+  const asynRoleToStaff = async (roleData) => {
+    console.log("roleData", roleData);
+
+    // const { staffAddress, roleName, rewardToken } = roleData;
+
+    // const staffAddress = "0xC89bA545a17b9a389F1dEB84E559F2a2C54ABEBB"; // Valid Ethereum address
+    // const roleName = "Manager of Interns"; // Non-empty string
+    // const rewardToken = "50000"; // Valid number (converted to uint256)
+
+    // const tokenReward = Number(rewardToken);
+
+    // console.log(
+    //   "staffAddress",
+    //   staffAddress,
+    //   "roleName",
+    //   roleName,
+    //   "rewardToken",
+    //   rewardToken
+    // );
+
     try {
       const provider = await providerSigner();
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
+      console.log("contract", contract);
 
       const registeredStaff = await contract.assignRole(
-        staffAddress,
-        roleName,
-        rewardToken
+        roleData.staffAddress,
+        roleData.roleName,
+        Number(roleData.tokenReward),
+        { gasLimit: 500000 }
       );
 
       registeredStaff.wait();
 
-      window.location.reload();
+      // window.location.reload();
 
       console.log("Role assyned to users successsfully");
     } catch (error) {
@@ -158,6 +179,34 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
+  const getAllRoles = async () => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      console.log("contract", contract);
+
+      let rolesList = [];
+
+      const roleCounts = await contract.roleCount();
+      // const staffAddrCount = await contract.userAddsressCount();
+      console.log("roleCounts", roleCounts);
+
+      for (let i = 1; i <= roleCounts; i++) {
+        const role = await contract.getRoleDetails(i);
+        rolesList.push(role);
+      }
+
+      console.log("rolesList", rolesList);
+
+      return rolesList;
+    } catch (error) {
+      console.log("Error in getting all staff roless");
+    }
+  };
+
+  // getAllRoles();
   // getAllregStaff();
 
   // getRegStaffDetails("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
@@ -176,6 +225,7 @@ export const ManagementProvider = ({ children }) => {
         textName,
         getRegStaffDetails,
         getAllregStaff,
+        getAllRoles,
       }}
     >
       {children}

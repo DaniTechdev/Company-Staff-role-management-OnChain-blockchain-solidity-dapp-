@@ -90,3 +90,86 @@ export const StaffData = [
     totalTokenEarned: 1500,
   },
 ];
+
+export const roleData = [
+  {
+    roleName: "Developer",
+    status: "Pending",
+    tokenReward: 500,
+    createdAt: 1672531200, // 2023-01-01 00:00:00 UTC
+    pendingAt: 1672534800, // 2023-01-01 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Designer",
+    status: "Ongoing",
+    tokenReward: 300,
+    createdAt: 1672617600, // 2023-01-02 00:00:00 UTC
+    pendingAt: 1672621200, // 2023-01-02 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Manager",
+    status: "Completed",
+    tokenReward: 1000,
+    createdAt: 1672704000, // 2023-01-03 00:00:00 UTC
+    pendingAt: 1672707600, // 2023-01-03 01:00:00 UTC
+    completedAt: 1672794000, // 2023-01-04 01:00:00 UTC
+  },
+  {
+    roleName: "Tester",
+    status: "Pending",
+    tokenReward: 200,
+    createdAt: 1672876800, // 2023-01-05 00:00:00 UTC
+    pendingAt: 1672880400, // 2023-01-05 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Analyst",
+    status: "Ongoing",
+    tokenReward: 400,
+    createdAt: 1672963200, // 2023-01-06 00:00:00 UTC
+    pendingAt: 1672966800, // 2023-01-06 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Marketer",
+    status: "Completed",
+    tokenReward: 700,
+    createdAt: 1673049600, // 2023-01-07 00:00:00 UTC
+    pendingAt: 1673053200, // 2023-01-07 01:00:00 UTC
+    completedAt: 1673139600, // 2023-01-08 01:00:00 UTC
+  },
+  {
+    roleName: "Support",
+    status: "Pending",
+    tokenReward: 150,
+    createdAt: 1673222400, // 2023-01-09 00:00:00 UTC
+    pendingAt: 1673226000, // 2023-01-09 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Consultant",
+    status: "Ongoing",
+    tokenReward: 600,
+    createdAt: 1673308800, // 2023-01-10 00:00:00 UTC
+    pendingAt: 1673312400, // 2023-01-10 01:00:00 UTC
+    completedAt: 0,
+  },
+  {
+    roleName: "Architect",
+    status: "Completed",
+    tokenReward: 1200,
+    createdAt: 1673395200, // 2023-01-11 00:00:00 UTC
+    pendingAt: 1673398800, // 2023-01-11 01:00:00 UTC
+    completedAt: 1673485200, // 2023-01-12 01:00:00 UTC
+  },
+  {
+    roleName: "Intern",
+    status: "Pending",
+    tokenReward: 100,
+    createdAt: 1673571600, // 2023-01-13 01:00:00 UTC
+    pendingAt: 1673575200, // 2023-01-13 02:00:00 UTC
+    completedAt: 0,
+  },
+];

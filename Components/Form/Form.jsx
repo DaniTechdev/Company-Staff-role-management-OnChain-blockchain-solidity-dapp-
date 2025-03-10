@@ -10,16 +10,12 @@ const Forms = ({ registerStaff }) => {
     gender: "",
   });
 
-  console.log("user", user);
+  // console.log("user", user);
 
-  const registerUser = async ({ setindex }) => {
+  const registerUser = async () => {
     try {
       registerStaff(user);
       // console.log("user", user);
-
-      if (registerStaff) {
-        setindex(2);
-      }
     } catch (error) {
       console.log("Problem in registering user");
     }
