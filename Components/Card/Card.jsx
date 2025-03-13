@@ -53,7 +53,7 @@ const Card = ({ StaffData, allStaffData }) => {
         <tbody>
           {allStaffData?.map((staff, index) => {
             return (
-              <tr>
+              <tr key={index}>
                 <td className={Style.table_th}>
                   <p>{index + 1}</p>
                 </td>

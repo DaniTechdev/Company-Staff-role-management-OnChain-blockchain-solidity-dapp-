@@ -18,6 +18,8 @@ const Home = () => {
     registerStaff,
     asynRoleToStaff,
     getAllregStaff,
+    checkIfStaffRegistered,
+    checkIfRegistered,
   } = useContext(ManagementContext);
 
   useEffect(() => {
@@ -29,7 +31,11 @@ const Home = () => {
   return (
     <div>
       <Navbar connectWallet={connectWallet} currentAccount={currentAccount} />
-      <Hero />
+      <Hero
+        checkIfStaffRegistered={checkIfStaffRegistered}
+        checkIfRegistered={checkIfRegistered}
+        currentAccount={currentAccount}
+      />
     </div>
   );
 };

@@ -155,23 +155,23 @@ export const ManagementProvider = ({ children }) => {
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      console.log("contract", contract);
+      // console.log("contract", contract);
 
       let userList = [];
 
       const staffAddrrArray = await contract.getAllRegisteredAddress();
       // const staffAddrCount = await contract.userAddsressCount();
-      console.log("staffAddrrArray", staffAddrrArray);
+      // console.log("staffAddrrArray", staffAddrrArray);
 
       for (let i = 0; i < staffAddrrArray.length; i++) {
         const staffAddress = staffAddrrArray[i];
-        console.log("staffAddress", staffAddress);
+        // console.log("staffAddress", staffAddress);
 
         const staffDetails = await getRegStaffDetails(staffAddress);
         userList.push(staffDetails);
       }
 
-      console.log("userList", userList);
+      // console.log("userList", userList);
 
       return userList;
     } catch (error) {
@@ -206,6 +206,48 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
+  const checkIfStaffRegistered = async (staffAddress) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      console.log("contract", contract);
+
+      const staffArray = await contract.registeredStaffAddress();
+
+      console.log("staffArray", staffArray);
+
+      const isRegistered = staffArray.includes(staffAddress);
+
+      return isRegistered;
+    } catch (error) {
+      console.log("Error in checking if staff is registered");
+    }
+  };
+
+  // checkIfStaffRegistered("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+
+  // console.log(
+  //   checkIfStaffRegistered("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+  // );
+
+  const checkIfRegistered = async (staffAddress) => {
+    // const staffAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+
+    // Check if staff is registered
+    checkIfStaffRegistered(staffAddress).then((isRegistered) => {
+      if (isRegistered) {
+        console.log("Staff is registered.");
+        return true;
+      } else {
+        console.log("Staff is not registered.");
+        return false;
+      }
+    });
+  };
+
+  // checkIfRegistered("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
   // getAllRoles();
   // getAllregStaff();
 
@@ -226,6 +268,8 @@ export const ManagementProvider = ({ children }) => {
         getRegStaffDetails,
         getAllregStaff,
         getAllRoles,
+        checkIfStaffRegistered,
+        checkIfRegistered,
       }}
     >
       {children}

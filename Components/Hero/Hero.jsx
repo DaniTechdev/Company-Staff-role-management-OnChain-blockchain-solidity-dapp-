@@ -1,9 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 //internal import
 import Style from "./Hero.module.css";
 
-const Hero = () => {
+const Hero = ({
+  checkIfStaffRegistered,
+  checkIfRegistered,
+  currentAccount,
+}) => {
+  const [registered, setregistered] = useState(false);
+
+  const checkIfStaffisReg = async () => {
+    const res = await checkIfRegistered(currentAccount);
+
+    console.log("res", res);
+
+    if (res) {
+      setregistered(true);
+    }
+  };
+
+  useEffect(() => {
+    checkIfStaffisReg();
+  }, []);
+
+  // checkIfStaffRegistered();
+
   return (
     <div className={Style.hero_container}>
       <h1> GREAT COMPANY STAFF MANAGEMENT SYSTEM ONCHAIN</h1>
@@ -12,7 +34,11 @@ const Hero = () => {
           <p>ARE YOU A REGISTERED STAFF OF THE GREAT COMPANY?</p>
           <p>
             <button>
-              <Link href={"/staff"}> Click here to Staff DashBoard</Link>
+              {registered ? (
+                <Link href={"/staff"}> Click here to Staff DashBoard</Link>
+              ) : (
+                <Link href={"/"}> Click here to Staff DashBoard</Link>
+              )}
             </button>
           </p>
         </div>
