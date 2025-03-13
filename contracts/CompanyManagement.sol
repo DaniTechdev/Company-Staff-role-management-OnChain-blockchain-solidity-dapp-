@@ -4,47 +4,59 @@ pragma solidity ^0.8.0;
 contract CompanyManagement {
     address public manager;
     uint256 public tokenRewardPerAttendance = 10; // Tokens for signing attendance
-    uint256 public roleCount;
-    uint256 public signalCount;
+    uint256 public taskCount;
+    // uint256 public signalCount;
     address[] public registeredStaffAddress;
 
     struct Staff {
         string name;
         uint256 tokensEarned;
-        uint256[] roleIds;
+        uint256[] taskIds;
         uint256 registeredAt; // Timestamp when staff is registered
         address staffAddress;
         string gender;
+        bool isRegistered;
     }
 
-    struct Role {
-        string roleName;
-        string status; // Pending, Ongoing, Completed
+    struct Task {
+        string taskName;
+        string status; // Pending(manager), Ongoing(staff acceptance), review(staff's clicking completed) ,rejected(manager) Completed(manager)
         uint256 tokenReward;
-        uint256 createdAt; // Timestamp when role is created
-        uint256 pendingAt; // Timestamp when role is marked as pending
-        uint256 completedAt; // Timestamp when role is marked as completed
-        address roleAsignedTo;
+        uint256 createdAt; // Timestamp when task is marked as pending
+        uint256 inAcceptedAt;
+        uint256 reviewAt //Time staff clicked completed but the manager will set it as review after which the  manager can toggle it to rejected or completed
+        uint256 rejectedAt
+        uint256 completedAt; // Timestamp when task is marked as completed
+        address taskAsignedTo;
+
     }
 
-    struct Signal {
-        uint256 roleId;
-        address staffAddress;
-        string signalType; // Started, Completed
-    }
+    // struct Signal {
+    //     uint256 taskId;
+    //     address staffAddress;
+    //     string signalType; // Started, Completed
+    // }
 
     mapping(address => Staff) public staffList;
-    mapping(uint256 => Role) public roles;
-    mapping(uint256 => Signal[]) public roleSignals;
+    mapping(uint256 => task) public tasks;
+    // mapping(uint256 => Signal[]) public taskSignals;
 
     event StaffRegistered(address staffAddress, string name);
-    event RoleAssigned(address staffAddress, uint256 roleId, string roleName);
+    event taskAssigned(address staffAddress, uint256 taskId, string taskName);
     event TokensDistributed(address staffAddress, uint256 amount);
-    event SignalSent(uint256 signalId, uint256 roleId, address staffAddress, string signalType);
-    event RoleStatusUpdatedByManager(uint256 roleId, string newStatus);
+    // event SignalSent(uint256 signalId, uint256 taskId, address staffAddress, string signalType);
+    event taskStatusUpdatedByManager(uint256 taskId, string newStatus);
 
     modifier onlyManager() {
         require(msg.sender == manager, "Only manager can call this function");
+        _;
+    }
+    
+    modifier onlyManagerOrAssignedStaff(uint256 taskId) {
+        require(
+            msg.sender == manager || msg.sender == tasks[taskId].taskAssignedTo,
+            "Only manager or assigned staff can call this function"
+        );
         _;
     }
 
@@ -59,10 +71,11 @@ contract CompanyManagement {
         staffList[staffAddress] = Staff({
             name: name,
             tokensEarned: 0,
-            roleIds: new uint256[](0),
+            taskIds: new uint256[](0),
             registeredAt: block.timestamp, // Set registration timestamp
             staffAddress: staffAddress,
-            gender:gender
+            gender:gender,
+            isRegistered: true
 
         });
 
@@ -70,20 +83,22 @@ contract CompanyManagement {
         emit StaffRegistered(staffAddress, name);
     }
 
-    // Assign a role to a staff (only manager)
-    function assignRole(address staffAddress, string memory roleName, uint256 tokenReward) public onlyManager {
-        roleCount++;
-        roles[roleCount] = Role({
-            roleName: roleName,
+    // Assign a task to a staff (only manager)
+    function assigntask(address staffAddress, string memory taskName, uint256 tokenReward) public onlyManager {
+        taskCount++;
+        tasks[taskCount] = task({
+            taskName: taskName,
             status: "Pending",
             tokenReward: tokenReward,
-            createdAt: block.timestamp, // Role creation time
-            pendingAt: block.timestamp, // Role is initially pending
-            completedAt: 0 ,// Role is not completed yet
-            roleAsignedTo:staffList[staffAddress].staffAddress
+            createdAt: block.timestamp, // task creation time and pending
+            inAcceptedAt:0;
+            reviewAt:0,
+            rejectedAt:0,
+            completedAt: 0 ,// task is not completed yet
+            taskAsignedTo:staffAddress,
         });
-        staffList[staffAddress].roleIds.push(roleCount);
-        emit RoleAssigned(staffAddress, roleCount, roleName);
+        staffList[staffAddress].taskIds.push(taskCount);
+        emit taskAssigned(staffAddress, taskCount, taskName);
     }
 
     // Staff signs attendance and earns tokens
@@ -93,40 +108,48 @@ contract CompanyManagement {
         emit TokensDistributed(msg.sender, tokenRewardPerAttendance);
     }
 
-    // Staff sends a signal for a role (e.g., Started or Completed)
-    function sendSignal(uint256 roleId, string memory signalType) public {
-        require(bytes(staffList[msg.sender].name).length > 0, "Not a registered staff");
-        signalCount++;
-        roleSignals[roleId].push(Signal({
-            roleId: roleId,
-            staffAddress: msg.sender,
-            signalType: signalType
-        }));
-        emit SignalSent(signalCount, roleId, msg.sender, signalType);
-    }
+    // Staff sends a signal for a task (e.g., Started or Completed)
+    // function sendSignal(uint256 taskId, string memory signalType) public {
+    //     require(bytes(staffList[msg.sender].name).length > 0, "Not a registered staff");
+    //     signalCount++;
+    //     taskSignals[taskId].push(Signal({
+    //         taskId: taskId,
+    //         staffAddress: msg.sender,
+    //         signalType: signalType
+    //     }));
+    //     emit SignalSent(signalCount, taskId, msg.sender, signalType);
+    // }
 
 
 
-    // Manager updates the status of a role (only manager)
-    function updateRoleStatusByManager(uint256 roleId, string memory newStatus) public onlyManager {
-        Role storage role = roles[roleId];
-        role.status = newStatus;
+    // Manager updates the status of a task (only manager)
+    function updatetaskStatusByManagerOrStaff(uint256 taskId, string memory newStatus) public onlyManagerOrAssignedStaff  {
+        task storage task = tasks[taskId];
+        task.status = newStatus;
 
         // Update timestamps based on status
-        if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("Pending"))) {
-            role.pendingAt = block.timestamp;
+        if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("inProgress"))) {
+            task.inProgress = block.timestamp;
+        } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("review"))) {
+            task.review = block.timestamp;
+        } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("rejected"))) {
+            task.rejected = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("Completed"))) {
-            role.completedAt = block.timestamp;
+            task.completedAt = block.timestamp;
         }
 
-        emit RoleStatusUpdatedByManager(roleId, newStatus);
+        emit taskStatusUpdatedByManager(taskId, newStatus);
     }
 
-    // Distribute tokens to staff when a role is completed (only manager)
-    function distributeTokensForRole(address staffAddress, uint256 roleId) public onlyManager {
-        require(keccak256(abi.encodePacked(roles[roleId].status)) == keccak256(abi.encodePacked("Completed")), "Role not completed");
-        staffList[staffAddress].tokensEarned += roles[roleId].tokenReward;
-        emit TokensDistributed(staffAddress, roles[roleId].tokenReward);
+    // function updatetaskStatusByStaff (uint256 taaskid, string memory newStatus) public registeredStaff{
+        
+    // }
+
+    // Distribute tokens to staff when a task is completed (only manager)
+    function distributeTokensFortask(address staffAddress, uint256 taskId) public onlyManager {
+        require(keccak256(abi.encodePacked(tasks[taskId].status)) == keccak256(abi.encodePacked("Completed")), "task not completed");
+        staffList[staffAddress].tokensEarned += tasks[taskId].tokenReward;
+        emit TokensDistributed(staffAddress, tasks[taskId].tokenReward);
     }
 
     // Get details of a staff member by the manager
@@ -134,39 +157,37 @@ contract CompanyManagement {
         return staffList[staffAddress];
     }
 
-    // Get details of a role
-    function getRoleDetails(uint256 roleId) public view returns (Role memory) {
-        return roles[roleId];
+    // Get details of a task
+    function gettaskDetails(uint256 taskId) public view returns (task memory) {
+        return tasks[taskId]; 
     }
 
-    // Get all signals for a role
-    function getSignalsForRole(uint256 roleId) public view returns (Signal[] memory) {
-        return roleSignals[roleId];
-    }
+    // Get all signals for a task
+    // function getSignalsFortask(uint256 taskId) public view returns (Signal[] memory) {
+    //     return taskSignals[taskId];
+    // }
 
     function getAllRegisteredAddress() public view returns (address[] memory){
         return  registeredStaffAddress;
     }
 
 
-   
+    function userAlltasks (address userAddress, uint256 taskId) public returns (task[] memory){
 
-    function userAllRoles (address userAddress, uint256 roleId) public returns (Role[] memory){
+        //create new array for save all the individuals tasks data
+      uint256[] storage usertaskIdsList= staffList[userAddress].taskIds;
+        //Get the particular user and then access the taskIds associated to the user
+         task[] memory usertaskList = new task[](usertaskIdsList.length);
 
-        //create new array for save all the individuals roles data
-      uint256[] storage userRoleIdsList= staffList[userAddress].roleIds;
-        //Get the particular user and then access the RoleIds associated to the user
-         Role[] memory userRoleList = new Role[](userRoleIdsList.length);
+      for(uint256 i= 0; i< usertaskIdsList.length; i++){
 
-      for(uint256 i= 0; i< userRoleIdsList.length; i++){
+        uint256  usertaskId = usertaskIdsList[i];
+        task storage task = tasks[usertaskId];
 
-        uint256  userRoleId = userRoleIdsList[i];
-        Role storage role = roles[userRoleId];
-
-        userRoleList[i]= role;
+        usertaskList[i]= task;
       }
 
-      return userRoleList;
+      return usertaskList;
 
     }
 }

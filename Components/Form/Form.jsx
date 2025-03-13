@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //Internal import
 import Style from "./Form.module.css";
 
-const Forms = ({ registerStaff }) => {
+const Forms = ({ registerStaff, setopenHandburger }) => {
   const [user, setuser] = useState({
     name: "",
     address: "",
@@ -20,6 +20,10 @@ const Forms = ({ registerStaff }) => {
       console.log("Problem in registering user");
     }
   };
+
+  useEffect(() => {
+    setopenHandburger(false);
+  }, []);
 
   return (
     <div className={Style.container}>

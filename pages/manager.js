@@ -19,7 +19,9 @@ const manager = () => {
   const [openHandburger, setopenHandburger] = useState(false);
   const [allStaffData, setallStaffData] = useState();
   const [allStaffRoles, setallStaffRoles] = useState();
-  // console.log("StaffData", StaffData);
+  console.log("openHandburger Clicked", openHandburger);
+
+  console.log("allStaffRoles", allStaffRoles);
 
   // console.log("All staff Data", allStaffData);
 
@@ -44,6 +46,7 @@ const manager = () => {
       setallStaffData(allData);
     };
   }, []);
+
   const {
     checkIfWalletIsConnected,
     connectWallet,
@@ -64,6 +67,7 @@ const manager = () => {
     <div className={Style.container}>
       <nav>
         <h1>Manager Dashboard</h1>
+
         <div>Manager account :{currentAccount.slice(0, 9)}...</div>
         <div className={Style.hanbuger_icon}>
           {!openHandburger ? (
@@ -81,7 +85,12 @@ const manager = () => {
         <div className={Style.leftbar}>
           {buttons.map((button) => (
             <div className={Style.leftbarBtnContainer} key={button.index}>
-              <button onClick={() => setindex(button.index)}>
+              <button
+                onClick={() => {
+                  setopenHandburger(false);
+                  setindex(button.index);
+                }}
+              >
                 {button.label}
               </button>
             </div>
@@ -89,7 +98,11 @@ const manager = () => {
         </div>
 
         {index == 1 ? (
-          <Forms registerStaff={registerStaff} setindex={index} />
+          <Forms
+            registerStaff={registerStaff}
+            setindex={index}
+            setopenHandburger={setopenHandburger}
+          />
         ) : index == 2 ? (
           <Card StaffData={StaffData} allStaffData={allStaffData} />
         ) : index == 3 ? (

@@ -17,6 +17,9 @@ export const ManagementProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [error, setError] = useState("");
   const [balance, setBalance] = useState("");
+  const [Staffdetails, setsetStaff] = useState();
+  const [staffList, setSetStaff] = useState();
+  const [staffRoleList, setstaffRoleList] = useState();
 
   //CONNECTING METAMASK
 
@@ -206,6 +209,43 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
+  const getAstaffRole = async (staffAddress) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      console.log("contract", contract);
+
+      let staffRolesList = [];
+
+      const staffProfileDetails = await contract.getStaffDetails(staffAddress);
+
+      console.log("staffProfileDetails", staffProfileDetails);
+
+      const staffRoleIdArray = staffProfileDetails.roleIds;
+      console.log("staffRoleIdArray", staffRoleIdArray);
+
+      // const staffAddrCount = await contract.userAddsressCount();
+      // console.log("roleCounts", roleCounts);
+
+      //using the lenght of the staffId array to get each
+      for (let i = 0; i < staffRoleIdArray.length; i++) {
+        const role = await contract.getRoleDetails(staffRoleIdArray[i]);
+        staffRolesList.push(role);
+      }
+
+      console.log("staffRolesList", staffRolesList);
+      setstaffRoleList(staffRolesList);
+
+      return staffRolesList;
+    } catch (error) {
+      console.log("Error in getting a single staff roles");
+    }
+  };
+
+  // getAstaffRole(currentAccount);
+
   const checkIfStaffRegistered = async (staffAddress) => {
     try {
       const provider = await providerSigner();
@@ -239,6 +279,7 @@ export const ManagementProvider = ({ children }) => {
     checkIfStaffRegistered(staffAddress).then((isRegistered) => {
       if (isRegistered) {
         console.log("Staff is registered.");
+
         return true;
       } else {
         console.log("Staff is not registered.");
@@ -247,11 +288,30 @@ export const ManagementProvider = ({ children }) => {
     });
   };
 
-  // checkIfRegistered("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-  // getAllRoles();
-  // getAllregStaff();
+  const getSingleStaffProfile = async (staffAddress) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
 
-  // getRegStaffDetails("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+      console.log("contract", contract);
+      let staffProfileDetail = [];
+
+      const staffProfileDetails = await contract.getStaffDetails(staffAddress);
+
+      console.log("staffProfileDetails", staffProfileDetails);
+      staffProfileDetail.push(staffProfileDetails);
+
+      console.log("staffProfileDetail", staffProfileDetail);
+      setSetStaff(staffProfileDetail);
+
+      // setsetStaff(staffProfileDetails);
+
+      return staffProfileDetails;
+    } catch (error) {
+      console.log("Error in getting single staff profile");
+    }
+  };
 
   const textName = "My name is NATOCHI";
   return (
@@ -270,6 +330,12 @@ export const ManagementProvider = ({ children }) => {
         getAllRoles,
         checkIfStaffRegistered,
         checkIfRegistered,
+        getSingleStaffProfile,
+        Staffdetails,
+        textName,
+        staffList,
+        staffRoleList,
+        getAstaffRole,
       }}
     >
       {children}

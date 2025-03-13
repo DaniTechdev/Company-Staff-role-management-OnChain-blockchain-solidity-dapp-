@@ -90,6 +90,14 @@ export const StaffData = [
     totalTokenEarned: 1500,
   },
 ];
+export const Staff = {
+  name: "Alice Johnson",
+  address: "0x1a2b3c4d5e6f708192a1b2c3d4e5f6a7b8c9d0e1",
+  gender: "Female",
+  roleCount: 3,
+  registeredAt: "2022-03-15T08:00:00Z",
+  totalTokenEarned: 1200,
+};
 
 export const roleData = [
   {
