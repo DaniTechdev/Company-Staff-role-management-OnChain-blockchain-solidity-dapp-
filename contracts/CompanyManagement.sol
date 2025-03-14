@@ -1,18 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./CompanyToken.sol"; // Import the token contract
+
 contract CompanyManagement {
     address public manager;
-    uint256 public tokenRewardPerAttendance = 10; // Tokens for signing attendance
+    uint256 public tokenRewardPerAttendance; // Tokens for signing attendance normal
     uint256 public taskCount;
-    // uint256 public signalCount;
     address[] public registeredStaffAddress;
+    CompanyToken public token; // Reference to the token contract
+    uint256 tokenDecimals;
 
     struct Staff {
         string name;
-        uint256 tokensEarned;
+        uint256 tokensEarned; // Tokens earned but not yet paid out
         uint256[] taskIds;
-        uint256 registeredAt; // Timestamp when staff is registered
+        uint256 registeredAt;
         address staffAddress;
         string gender;
         bool isRegistered;
@@ -20,132 +24,132 @@ contract CompanyManagement {
 
     struct Task {
         string taskName;
-        string status; // Pending(manager), Ongoing(staff acceptance), review(staff's clicking completed) ,rejected(manager) Completed(manager)
-        uint256 tokenReward;
-        uint256 createdAt; // Timestamp when task is marked as pending
+        string status; 
+        uint256 tokenReward; // Tokens rewarded for this task (in token decimals)
+        uint256 createdAt;
         uint256 inAcceptedAt;
-        uint256 reviewAt ;//Time staff clicked completed but the manager will set it as review after which the  manager can toggle it to rejected or completed
+        uint256 reviewAt;
         uint256 rejectedAt;
-        uint256 completedAt; // Timestamp when task is marked as completed
-        address taskAsignedTo;
-
+        uint256 completedAt;
+        address taskAssignedTo;
     }
-
-  
 
     mapping(address => Staff) public staffList;
     mapping(uint256 => Task) public tasks;
-    // mapping(uint256 => Signal[]) public taskSignals;
 
     event StaffRegistered(address staffAddress, string name);
-    event taskAssigned(address staffAddress, uint256 taskId, string taskName);
+    event TaskAssigned(address staffAddress, uint256 taskId, string taskName);
     event TokensDistributed(address staffAddress, uint256 amount);
-    // event SignalSent(uint256 signalId, uint256 taskId, address staffAddress, string signalType);
-    event taskStatusUpdatedByManager(uint256 taskId, string newStatus);
+    event TaskStatusUpdatedByManagerOrStaff(uint256 taskId, string newStatus);
+    event Payout(address staffAddress, uint256 amount);
 
     modifier onlyManager() {
         require(msg.sender == manager, "Only manager can call this function");
         _;
     }
-    
+
     modifier onlyManagerOrAssignedStaff(uint256 taskId) {
         require(
-            msg.sender == manager || msg.sender == tasks[taskId].taskAsignedTo,
-            "Only manager or assigned staff can call this function"
+            msg.sender == manager || msg.sender == tasks[taskId].taskAssignedTo,
+            "Only manager or assigned staff"
         );
         _;
     }
 
-    constructor() {
+    // Initialize with the token contract address
+    constructor(address _tokenAddress) {
         manager = msg.sender;
+        token = CompanyToken(_tokenAddress);
+        // tokenRewardPerAttendance = 10 * 10 ** token.decimals(); // e.g., 10 tokens
+        tokenDecimals = token.decimals()
     }
 
     // Register a new staff (only manager)
     function registerStaff(address staffAddress, string memory name, string memory gender) public onlyManager {
-        // require(staffList[staffAddress].tokensEarned == 0, "Staff already registered");
         require(staffList[staffAddress].registeredAt == 0, "Staff already registered");
         staffList[staffAddress] = Staff({
             name: name,
             tokensEarned: 0,
             taskIds: new uint256[](0),
-            registeredAt: block.timestamp, // Set registration timestamp
+            registeredAt: block.timestamp,
             staffAddress: staffAddress,
-            gender:gender,
+            gender: gender,
             isRegistered: true
-
         });
-
         registeredStaffAddress.push(staffAddress);
         emit StaffRegistered(staffAddress, name);
     }
 
-    // Assign a task to a staff (only manager)
-    function assigntask(address staffAddress, string memory taskName, uint256 tokenReward) public onlyManager {
+    // Assign a task and mint tokens to this contract (only manager)
+    function assignTask(address staffAddress, string memory taskName, uint256 tokenReward) public onlyManager {
+
+         uint256 tokenRewardIngwei = tokenRewardInTokens * (10 ** tokenDecimals);
         taskCount++;
+        
         tasks[taskCount] = Task({
             taskName: taskName,
             status: "Pending",
             tokenReward: tokenReward,
-            createdAt: block.timestamp, // task creation time and pending
-            inAcceptedAt:0,
-            reviewAt:0,
-            rejectedAt:0,
-            completedAt: 0 ,// task is not completed yet
-            taskAsignedTo:staffAddress
+            createdAt: block.timestamp,
+            inAcceptedAt: 0,
+            reviewAt: 0,
+            rejectedAt: 0,
+            completedAt: 0,
+            taskAssignedTo: staffAddress
         });
         staffList[staffAddress].taskIds.push(taskCount);
-        emit taskAssigned(staffAddress, taskCount, taskName);
+
+        // Mint tokens to this contract
+        token.mint(address(this), tokenRewardIngwei);
+        emit TaskAssigned(staffAddress, taskCount, taskName);
     }
 
     // Staff signs attendance and earns tokens
     function signAttendance() public {
-        require(bytes(staffList[msg.sender].name).length > 0, "Not a registered staff");
+        require(staffList[msg.sender].isRegistered, "Not a registered staff");
         staffList[msg.sender].tokensEarned += tokenRewardPerAttendance;
+
+        uint256 tokenRewardPerAttendanceInBasedUnit = tokenRewardPerAttendance * (10 ** tokenDecimals)
+
+        // Mint tokens to this contract
+        token.mint(address(this), tokenRewardPerAttendanceInBasedUnit);
         emit TokensDistributed(msg.sender, tokenRewardPerAttendance);
     }
 
-   
-    function updatetaskStatusByManagerOrStaff(uint256 taskId, string memory newStatus) public onlyManagerOrAssignedStaff(taskId)  {
+    // Update task status and handle token rewards (manager or assigned staff)
+    function updateTaskStatusByManagerOrStaff(uint256 taskId, string memory newStatus) public onlyManagerOrAssignedStaff(taskId) {
         Task storage task = tasks[taskId];
         task.status = newStatus;
 
-        // Update timestamps based on status
+        // If task is marked as "Completed", credit tokens to staff
+
         if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("inProgress"))) {
-            task.inAcceptedAt = block.timestamp;
+            task.inProgress = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("review"))) {
-            task.reviewAt = block.timestamp;
+            task.review = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("rejected"))) {
-            task.rejectedAt = block.timestamp;
+            task.rejected = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("Completed"))) {
-            task.completedAt = block.timestamp;
+            staffList[task.taskAssignedTo].tokensEarned += task.tokenReward;
         }
 
-        emit taskStatusUpdatedByManager(taskId, newStatus);
+
+        emit TaskStatusUpdatedByManagerOrStaff(taskId, newStatus);
     }
 
+    // Staff requests payout of earned tokens
+    function requestPayout() public {
+        require(staffList[msg.sender].isRegistered, "Not registered");
+        uint256 amount = staffList[msg.sender].tokensEarned;
+        require(amount > 0, "No tokens to payout");
 
-    // Distribute tokens to staff when a task is completed (only manager)
-    function distributeTokensFortask(address staffAddress, uint256 taskId) public onlyManager {
-        require(keccak256(abi.encodePacked(tasks[taskId].status)) == keccak256(abi.encodePacked("Completed")), "task not completed");
-        staffList[staffAddress].tokensEarned += tasks[taskId].tokenReward;
-        emit TokensDistributed(staffAddress, tasks[taskId].tokenReward);
+        uint amountInBasegwei = amount * (10 ** tokenDecimals);
+
+        // Reset earned tokens
+        staffList[msg.sender].tokensEarned = 0;
+
+        // Transfer tokens from this contract to the staff
+        token.transfer(msg.sender, amount);
+        emit Payout(msg.sender, amount);
     }
-
-    // Get details of a staff member by the manager
-    function getStaffDetails(address staffAddress) public view returns (Staff memory) {
-        return staffList[staffAddress];
-    }
-
-    // Get details of a task
-    function gettaskDetails(uint256 taskId) public view returns (Task memory) {
-        return tasks[taskId]; 
-    }
-
-
-    function getAllRegisteredAddress() public view returns (address[] memory){
-        return  registeredStaffAddress;
-    }
-
-
-   
 }

@@ -21,6 +21,73 @@ export const ManagementProvider = ({ children }) => {
   const [staffList, setSetStaff] = useState();
   const [staffRoleList, setstaffRoleList] = useState();
 
+  const [tokenContract, setTokenContract] = useState(null);
+  const [managementContract, setManagementContract] = useState(second);
+
+  //token  and managemnent contracts functions, deployment and granting minting roles
+
+  useEffect(() => {
+    const tokenAddress = localStorage.getItem("tokenAddress");
+    const managementAddress = localStorage.getItem("managementAddress");
+
+    if (tokenAddress && managementAddress) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      const token = new ethers.Contract(tokenAddress, TokenABI, signer);
+      const management = new ethers.Contract(
+        managementAddress,
+        ManagementABI,
+        signer
+      );
+
+      setTokenContract(token);
+      setManagementContract(management);
+    }
+  }, []);
+
+  // Deploy Token Contract
+  const deployTokenContract = async () => {
+    const signer = await providerSigner.signer();
+
+    const TokenFactory = new ethers.ContractFactory(
+      TokenABI,
+      TokenBytecode,
+      signer
+    );
+    const token = await TokenFactory.deploy(managerAddress);
+    await token.deployed();
+    setTokenContract(token);
+    localStorage.setItem("tokenAddress", token.address); // Save to local storage
+
+    return token.address;
+  };
+
+  // Deploy Management Contract
+  const deployManagementContract = async (tokenAddress) => {
+    const signer = await providerSigner.signer();
+    const ManagementFactory = new ethers.ContractFactory(
+      ManagementABI,
+      ManagementBytecode,
+      signer
+    );
+    const management = await ManagementFactory.deploy(tokenAddress);
+    await management.deployed();
+    setManagementContract(management);
+    localStorage.setItem("managementAddress", management.address); // Save to local storage
+    return management.address;
+  };
+
+  // Grant Minting Role to Management Contract
+  const grantMinterRole = async (tokenAddress, managementAddress) => {
+    const signer = await connectWallet();
+    const token = new ethers.Contract(tokenAddress, TokenABI, signer);
+    await token.grantRole(
+      ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")),
+      managementAddress
+    );
+  };
+
   //CONNECTING METAMASK
 
   const providerSigner = async () => {
@@ -109,7 +176,7 @@ export const ManagementProvider = ({ children }) => {
       const contract = fetchContract(signer);
       console.log("contract", contract);
 
-      const registeredStaff = await contract.assignRole(
+      const registeredStaff = await contract.assigntask(
         roleData.staffAddress,
         roleData.roleName,
         Number(roleData.tokenReward),
