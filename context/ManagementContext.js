@@ -4,12 +4,34 @@ import { ethers } from "ethers";
 
 //INTERNAL IMPORT
 
-import { contractAddresss, contractAbi } from "./constant";
+import {
+  companyManagementContract,
+  companyTokenContract,
+  MgtcontractAbi,
+  companyTokenAbi,
+  companyTokenBytecode,
+  companyManagementBytecode,
+} from "./constant";
 
 //interact with our smart contract
 
 const fetchContract = (signerOrProvider) =>
-  new ethers.Contract(contractAddresss, contractAbi, signerOrProvider);
+  new ethers.Contract(
+    companyManagementContract,
+    MgtcontractAbi,
+    signerOrProvider
+  );
+
+//or if I am using the token and management contract created by calling the the deployTokenContract and deployManagementContract functions,
+//then I have to make use of this fetchContract function to interact with the contract
+
+// const fetchContract = (signerOrProvider) =>{
+//   new ethers.Contract(
+//     tokenContract.address,
+//     companyTokenAbi,
+//     signerOrProvider
+//   );
+// }
 
 export const ManagementContext = React.createContext();
 
@@ -34,10 +56,10 @@ export const ManagementProvider = ({ children }) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const token = new ethers.Contract(tokenAddress, TokenABI, signer);
+      const token = new ethers.Contract(tokenAddress, companyTokenAbi, signer);
       const management = new ethers.Contract(
         managementAddress,
-        ManagementABI,
+        MgtcontractAbi,
         signer
       );
 
@@ -51,8 +73,8 @@ export const ManagementProvider = ({ children }) => {
     const signer = await providerSigner.signer();
 
     const TokenFactory = new ethers.ContractFactory(
-      TokenABI,
-      TokenBytecode,
+      companyTokenAbi,
+      companyTokenBytecode,
       signer
     );
     const token = await TokenFactory.deploy(managerAddress);
@@ -67,8 +89,8 @@ export const ManagementProvider = ({ children }) => {
   const deployManagementContract = async (tokenAddress) => {
     const signer = await providerSigner.signer();
     const ManagementFactory = new ethers.ContractFactory(
-      ManagementABI,
-      ManagementBytecode,
+      MgtcontractAbi,
+      companyManagementBytecode,
       signer
     );
     const management = await ManagementFactory.deploy(tokenAddress);
@@ -80,7 +102,7 @@ export const ManagementProvider = ({ children }) => {
 
   // Grant Minting Role to Management Contract
   const grantMinterRole = async (tokenAddress, managementAddress) => {
-    const signer = await connectWallet();
+    const signer = await providerSigner.signer();
     const token = new ethers.Contract(tokenAddress, TokenABI, signer);
     await token.grantRole(
       ethers.utils.keccak256(ethers.utils.toUtf8Bytes("MINTER_ROLE")),

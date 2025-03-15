@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./CompanyToken.sol"; // Import the token contract
@@ -10,7 +10,7 @@ contract CompanyManagement {
     uint256 public taskCount;
     address[] public registeredStaffAddress;
     CompanyToken public token; // Reference to the token contract
-    uint256 tokenDecimals;
+    uint256 public tokenDecimals;
 
     struct Staff {
         string name;
@@ -61,7 +61,7 @@ contract CompanyManagement {
         manager = msg.sender;
         token = CompanyToken(_tokenAddress);
         // tokenRewardPerAttendance = 10 * 10 ** token.decimals(); // e.g., 10 tokens
-        tokenDecimals = token.decimals()
+        tokenDecimals = token.decimals();
     }
 
     // Register a new staff (only manager)
@@ -80,10 +80,15 @@ contract CompanyManagement {
         emit StaffRegistered(staffAddress, name);
     }
 
+    function setTokenRewardPerAttendance(uint256 _tokenReward) public onlyManager {
+    tokenRewardPerAttendance = _tokenReward;
+    }
+
+
     // Assign a task and mint tokens to this contract (only manager)
     function assignTask(address staffAddress, string memory taskName, uint256 tokenReward) public onlyManager {
 
-         uint256 tokenRewardIngwei = tokenRewardInTokens * (10 ** tokenDecimals);
+         uint256 tokenRewardIngwei = tokenReward * (10 ** tokenDecimals);
         taskCount++;
         
         tasks[taskCount] = Task({
@@ -109,7 +114,7 @@ contract CompanyManagement {
         require(staffList[msg.sender].isRegistered, "Not a registered staff");
         staffList[msg.sender].tokensEarned += tokenRewardPerAttendance;
 
-        uint256 tokenRewardPerAttendanceInBasedUnit = tokenRewardPerAttendance * (10 ** tokenDecimals)
+        uint256 tokenRewardPerAttendanceInBasedUnit = tokenRewardPerAttendance * (10 ** tokenDecimals);
 
         // Mint tokens to this contract
         token.mint(address(this), tokenRewardPerAttendanceInBasedUnit);
@@ -124,13 +129,14 @@ contract CompanyManagement {
         // If task is marked as "Completed", credit tokens to staff
 
         if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("inProgress"))) {
-            task.inProgress = block.timestamp;
+            task.inAcceptedAt = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("review"))) {
-            task.review = block.timestamp;
+            task.reviewAt = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("rejected"))) {
-            task.rejected = block.timestamp;
+            task.rejectedAt = block.timestamp;
         } else if (keccak256(abi.encodePacked(newStatus)) == keccak256(abi.encodePacked("Completed"))) {
             staffList[task.taskAssignedTo].tokensEarned += task.tokenReward;
+            task.completedAt = block.timestamp;
         }
 
 
@@ -149,7 +155,7 @@ contract CompanyManagement {
         staffList[msg.sender].tokensEarned = 0;
 
         // Transfer tokens from this contract to the staff
-        token.transfer(msg.sender, amount);
+        token.transfer(msg.sender, amountInBasegwei);
         emit Payout(msg.sender, amount);
     }
 }
