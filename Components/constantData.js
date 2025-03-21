@@ -1,11 +1,10 @@
 export const buttons = [
   { label: "Register Staff", index: 1 },
   { label: "Staff details", index: 2 },
-  { label: "Assign role", index: 3 },
-  { label: "Staff Roles", index: 4 },
-  { label: "Roles signals", index: 5 },
-  { label: "Total role token rewarded", index: 6 },
-  { label: "Total Attendance token rewarded", index: 7 },
+  { label: "Assign Task", index: 3 },
+  { label: "Attendance", index: 4 },
+  { label: "Total Task token rewarded", index: 5 },
+  { label: "Total Attendance token rewarded", index: 6 },
 ];
 
 export const StaffData = [

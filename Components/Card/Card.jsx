@@ -5,6 +5,8 @@ import Image from "next/image";
 import Style from "./Style.module.css";
 
 const Card = ({ StaffData, allStaffData }) => {
+  const [Modal, setModal] = useState(false);
+
   function convertTime(timestamp) {
     const date = new Date(timestamp); // Create a new Date object from the timestamp
 
@@ -37,52 +39,57 @@ const Card = ({ StaffData, allStaffData }) => {
   // }, []);
 
   return (
-    <div className={Style.container}>
-      <table>
-        <thead>
-          <tr>
-            <th className={Style.table_th}>Unique ID</th>
-            <th className={Style.table_th}>Staff name</th>
-            <th className={Style.table_th}>Earned Token</th>
-            <th className={Style.table_th}>staff address</th>
-            <th className={Style.table_th_mdremove}>gender</th>
-            <th className={Style.table_th}>role count</th>
-            <th className={Style.table_th}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {allStaffData?.map((staff, index) => {
-            return (
-              <tr key={index}>
-                <td className={Style.table_th}>
-                  <p>{index + 1}</p>
-                </td>
+    <div className={Style.container_main}>
+      <div className={Style.container}>
+        <table>
+          <thead>
+            <tr>
+              <th className={Style.table_th}>Unique ID</th>
+              <th className={Style.table_th}>Staff name</th>
+              <th className={Style.table_th}>Earned Token</th>
+              <th className={Style.table_th_mdremove}>gender</th>
+              <th className={Style.table_th}>task count</th>
+              <th className={Style.table_th}>ASSIGNMENT</th>
 
-                <td className={Style.table_th}>
-                  <p>{staff.name}</p>
-                </td>
-                <td className={Style.table_th}>
-                  <p>{staff.tokensEarned.toNumber()}</p>
-                </td>
-                <td className={Style.table_th}>
-                  <p>{staff.staffAddress.slice(0, 9)}...</p>
-                </td>
-                <td className={Style.table_th_mdremove}>
-                  <p>{staff.gender}</p>
-                </td>
-                <td className={Style.table_th}>
-                  <p>{staff.roleIds.length}</p>
-                </td>
-                <td className={Style.table_th}>
-                  <button>See details</button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              <th className={Style.table_th}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {allStaffData?.map((staff, index) => {
+              return (
+                <tr key={index}>
+                  <td className={Style.table_th}>
+                    <p>{index + 1}</p>
+                  </td>
 
-      {/* Mobile view */}
+                  <td className={Style.table_th}>
+                    <p>{staff.name}</p>
+                  </td>
+                  <td className={Style.table_th}>
+                    <p>{staff.tokensEarned.toNumber()}</p>
+                  </td>
+
+                  <td className={Style.table_th_mdremove}>
+                    <p>{staff.gender}</p>
+                  </td>
+                  <td className={Style.table_th}>
+                    {/* <p>{staff.taskIds.length > 0 ? staff.roleIds.length : "0"}</p> */}
+                    <p>{staff.taskIds.length}</p>
+                  </td>
+                  <td className={Style.table_th}>
+                    <button onClick={() => setModal(true)}>Assign Task</button>
+                  </td>
+                  <td className={Style.table_th}>
+                    <button>See details</button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* Mobile view */}
+      </div>
     </div>
   );
 };

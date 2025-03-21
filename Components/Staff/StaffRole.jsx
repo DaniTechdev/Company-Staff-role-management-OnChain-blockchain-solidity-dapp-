@@ -9,10 +9,11 @@ const StaffRole = ({ roleData }) => {
       <table>
         <thead>
           <tr>
-            <th className={Style.table_th}>Role Name</th>
-            <th className={Style.table_th}>Staff Address</th>
+            <th className={Style.table_th}>Task Name</th>
+            <th className={Style.table_th}>Staff Name</th>
             <th className={Style.table_th}>Status</th>
             <th className={Style.table_th}>Token Reward</th>
+            <th className={Style.table_th}>Action</th>
             <th className={Style.table_th_mdremove}>Created At</th>
             <th className={Style.table_th_mdremove}>Pending At</th>
             <th className={Style.table_th_mdremove}>Completed At</th>
@@ -20,29 +21,32 @@ const StaffRole = ({ roleData }) => {
           </tr>
         </thead>
         <tbody>
-          {roleData?.map((role, index) => {
-            console.log("role", role);
+          {roleData?.map((task, index) => {
+            console.log("task", task);
 
             // Format timestamps to readable dates
-            const createdAt = new Date(role.createdAt * 1000).toLocaleString();
-            const pendingAt = new Date(role.pendingAt * 1000).toLocaleString();
-            const completedAt = role.completedAt.toNumber()
-              ? new Date(role.completedAt * 1000).toLocaleString()
+            const createdAt = new Date(task.createdAt * 1000).toLocaleString();
+            const pendingAt = new Date(task.pendingAt * 1000).toLocaleString();
+            const completedAt = task.completedAt.toNumber()
+              ? new Date(task.completedAt * 1000).toLocaleString()
               : "Not Completed";
 
             return (
               <tr key={index}>
                 <td className={Style.table_th}>
-                  <p>{role.roleName}</p>
+                  <p>{task.taskName}</p>
                 </td>
                 <td className={Style.table_th}>
-                  <p>0x4537739809e...</p>
+                  <p>{task.taskAssignedToName}</p>
                 </td>
                 <td className={Style.table_th}>
-                  <p>{role.status}</p>
+                  <p>{task.status}</p>
                 </td>
                 <td className={Style.table_th}>
-                  <p>{role.tokenReward.toNumber()}</p>
+                  <p>{task.tokenReward.toNumber()}</p>
+                </td>
+                <td className={Style.table_th}>
+                  <p>Actions options</p>
                 </td>
                 <td className={Style.table_th_mdremove}>
                   <p>{createdAt}</p>

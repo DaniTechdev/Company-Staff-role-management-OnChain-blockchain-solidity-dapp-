@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { FaWindowClose } from "react-icons/fa";
 
 //Internal import
 import { ManagementContext } from "../context/ManagementContext";
@@ -7,11 +9,16 @@ import Style from "../styles/staaff.module.css";
 import Staffcard from "../Components/StaffCard/Staffcard";
 import StaffRole from "../Components/Staff/StaffRole";
 import RoleTable from "../Components/RoleForm/RoleTable/RoleTable";
+import StaffcardCopy from "../Components/StaffCard/StaffcardCopy";
 
 const staff = () => {
   const [tab, setTab] = useState("");
   const [staffDataU, setStaffData] = useState(null);
-  console.log("staffDataU", staffDataU);
+  const [staffTask, setStaffTask] = useState(null);
+  const [openHandburger, setopenHandburger] = useState(false);
+
+  // console.log("staffDataU", staffDataU);
+  console.log("staffTask", staffTask);
 
   // console.log("staffDataU", staffDataU[0]);
 
@@ -28,12 +35,14 @@ const staff = () => {
     getSingleStaffProfile,
     Staffdetails,
     staffList,
-    staffRoleList,
+    staffTaskList,
     getAstaffRole,
     textName,
+    signAttendance,
   } = useContext(ManagementContext);
 
   console.log("CURRENT ACCOUTN", currentAccount);
+  // console.log("staffList", staffList);
 
   // useEffect(() => {
   //   checkIfWalletIsConnected();
@@ -57,6 +66,7 @@ const staff = () => {
       console.log("allStaffRole", allStaffRole);
 
       setStaffData(allData);
+      setStaffTask(allStaffRole);
     };
   }, [tab]);
   // console.log("Staffdetails", Staffdetails);
@@ -67,7 +77,7 @@ const staff = () => {
     <div className={Style.container}>
       <nav>
         <h1>Staff Dashboard</h1>
-        <div>
+        <div className={Style.staff_name}>
           {" "}
           {staffList?.map((staff, index) => (
             <h1 key={index}>
@@ -78,6 +88,16 @@ const staff = () => {
           ))}
         </div>
         <p>Staff waallet: {currentAccount?.slice(0, 12)}...</p>
+        <div className={Style.hanbuger_icon}>
+          {!openHandburger ? (
+            <GiHamburgerMenu
+              size={25}
+              onClick={() => setopenHandburger(true)}
+            />
+          ) : (
+            <FaWindowClose size={25} onClick={() => setopenHandburger(false)} />
+          )}
+        </div>
       </nav>
 
       <section>
@@ -86,17 +106,49 @@ const staff = () => {
             <button onClick={() => setTab("profile")}>View Profile</button>
           </div>
           <div className={Style.leftbarBtnContainer}>
-            <button onClick={() => setTab("roles")}>View Roles/Task</button>
+            <button onClick={() => setTab("Assigned Tasks")}>
+              View Roles/Task
+            </button>
           </div>
           <div className={Style.leftbarBtnContainer}>
-            <button>Signal History</button>
+            <button onClick={() => setTab("Attendance")}>
+              Sign Attendance
+            </button>
           </div>
         </div>
         <div className={Style.rightbar}>
           {tab === "profile" && <Staffcard staffDataU={staffList} />}
-          {tab === "roles" && <StaffRole roleData={staffRoleList} />}
+          {tab === "Assigned Tasks" && <StaffRole roleData={staffTaskList} />}
+          {tab === "Attendance" && (
+            <StaffcardCopy
+              staffDataU={staffList}
+              signAttendance={signAttendance}
+            />
+          )}
         </div>
+
+        {openHandburger ? (
+          <div className={Style.ModalModel}>
+            <div className={Style.leftbarBtnContainer}>
+              <button onClick={() => setTab("profile")}>View Profile</button>
+            </div>
+            <div className={Style.leftbarBtnContainer}>
+              <button onClick={() => setTab("Assigned Tasks")}>
+                View Roles/Task
+              </button>
+            </div>
+            <div className={Style.leftbarBtnContainer}>
+              <button onClick={() => setTab("Attendance")}>
+                Sign Attendance
+              </button>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
       </section>
+
+      {/* MOBILE VIEW */}
     </div>
   );
 };

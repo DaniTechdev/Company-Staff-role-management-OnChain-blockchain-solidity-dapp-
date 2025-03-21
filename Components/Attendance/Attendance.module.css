@@ -1,0 +1,19 @@
+.attendanceContainer {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid red;
+  width: 70%;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+  text-align: center;
+}
+
+.attendanceContainer form {
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  padding: 20px;
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Style from "./RoleForm.module.css";
 import RoleTable from "./RoleTable/RoleTable";
 
-const RoleForm = ({ asynRoleToStaff, allStaffRoles }) => {
+const RoleForm = ({ asynRoleToStaff, allStaffRoles, StatusChange }) => {
   const [roleData, setroleData] = useState({
     roleName: "",
     staffAddress: "",
@@ -30,11 +30,11 @@ const RoleForm = ({ asynRoleToStaff, allStaffRoles }) => {
       <div className={Style.formDiv} onSubmit={(e) => e.preventDefault()}>
         <form>
           <div className={Style.formGroup}>
-            <label htmlFor="rolename">Role Name:</label>
+            <label htmlFor="rolename">Task info:</label>
             <input
               type="text"
               id="rolename"
-              placeholder="Rolename"
+              placeholder="task info"
               onChange={(e) =>
                 setroleData({
                   ...roleData,
@@ -44,7 +44,7 @@ const RoleForm = ({ asynRoleToStaff, allStaffRoles }) => {
             />
           </div>
           <div className={Style.formGroup}>
-            <label htmlFor="address">Staff Address to assign role to:</label>
+            <label htmlFor="address">Staff Address to assign task to:</label>
             <input
               type="text"
               placeholder="Staff address"
@@ -71,11 +71,11 @@ const RoleForm = ({ asynRoleToStaff, allStaffRoles }) => {
               }
             />
           </div>
-          <button onClick={() => handleSubmit()}>Asign Role</button>
+          <button onClick={() => handleSubmit()}>Asign Task</button>
         </form>
       </div>
 
-      <RoleTable roleData={allStaffRoles} />
+      <RoleTable roleData={allStaffRoles} StatusChange={StatusChange} />
     </div>
   );
 };

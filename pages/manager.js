@@ -13,17 +13,18 @@ import managerAccount from "../context/constant";
 import Forms from "../Components/Form/Form";
 import Card from "../Components/Card/Card";
 import RoleForm from "../Components/RoleForm/RoleForm";
+import Attendance from "../Components/Attendance/Attendance";
 
 const manager = () => {
   const [index, setindex] = useState(null);
   const [openHandburger, setopenHandburger] = useState(false);
   const [allStaffData, setallStaffData] = useState();
   const [allStaffRoles, setallStaffRoles] = useState();
-  console.log("openHandburger Clicked", openHandburger);
+  // console.log("openHandburger Clicked", openHandburger);
 
   console.log("allStaffRoles", allStaffRoles);
 
-  // console.log("All staff Data", allStaffData);
+  console.log("All staff Data", allStaffData);
 
   const handleIndex = (index) => {
     setindex(index);
@@ -35,7 +36,8 @@ const manager = () => {
     const getStaffData = getAllregStaff();
     const allStaffRole = getAllRoles();
 
-    // console.log("getStaffData", getStaffData);
+    console.log("getStaffData", getStaffData);
+    console.log("allStaffRole", allStaffRole);
 
     // console.log("Get all getCampaignsData", getStaffData);
 
@@ -57,6 +59,8 @@ const manager = () => {
     asynRoleToStaff,
     getAllregStaff,
     getAllRoles,
+    StatusChange,
+    setAttendanceTokenReward,
   } = useContext(ManagementContext);
 
   useEffect(() => {
@@ -97,21 +101,26 @@ const manager = () => {
           ))}
         </div>
 
-        {index == 1 ? (
+        {index == 1 && (
           <Forms
             registerStaff={registerStaff}
             setindex={index}
             setopenHandburger={setopenHandburger}
           />
-        ) : index == 2 ? (
+        )}
+
+        {index == 2 && (
           <Card StaffData={StaffData} allStaffData={allStaffData} />
-        ) : index == 3 ? (
+        )}
+        {index == 3 && (
           <RoleForm
             asynRoleToStaff={asynRoleToStaff}
             allStaffRoles={allStaffRoles}
+            StatusChange={StatusChange}
           />
-        ) : (
-          ""
+        )}
+        {index == 4 && (
+          <Attendance setAttendanceTokenReward={setAttendanceTokenReward} />
         )}
       </div>
 

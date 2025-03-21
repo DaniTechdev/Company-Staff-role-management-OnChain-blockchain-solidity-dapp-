@@ -41,10 +41,10 @@ export const ManagementProvider = ({ children }) => {
   const [balance, setBalance] = useState("");
   const [Staffdetails, setsetStaff] = useState();
   const [staffList, setSetStaff] = useState();
-  const [staffRoleList, setstaffRoleList] = useState();
+  const [staffTaskList, setstaffRoleList] = useState();
 
   const [tokenContract, setTokenContract] = useState(null);
-  const [managementContract, setManagementContract] = useState(second);
+  const [managementContract, setManagementContract] = useState(null);
 
   //token  and managemnent contracts functions, deployment and granting minting roles
 
@@ -173,24 +173,7 @@ export const ManagementProvider = ({ children }) => {
   };
 
   const asynRoleToStaff = async (roleData) => {
-    console.log("roleData", roleData);
-
-    // const { staffAddress, roleName, rewardToken } = roleData;
-
-    // const staffAddress = "0xC89bA545a17b9a389F1dEB84E559F2a2C54ABEBB"; // Valid Ethereum address
-    // const roleName = "Manager of Interns"; // Non-empty string
-    // const rewardToken = "50000"; // Valid number (converted to uint256)
-
-    // const tokenReward = Number(rewardToken);
-
-    // console.log(
-    //   "staffAddress",
-    //   staffAddress,
-    //   "roleName",
-    //   roleName,
-    //   "rewardToken",
-    //   rewardToken
-    // );
+    console.log("roleData contex", roleData);
 
     try {
       const provider = await providerSigner();
@@ -198,7 +181,7 @@ export const ManagementProvider = ({ children }) => {
       const contract = fetchContract(signer);
       console.log("contract", contract);
 
-      const registeredStaff = await contract.assigntask(
+      const registeredStaff = await contract.assignTask(
         roleData.staffAddress,
         roleData.roleName,
         Number(roleData.tokenReward),
@@ -247,13 +230,15 @@ export const ManagementProvider = ({ children }) => {
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      // console.log("contract", contract);
+      console.log("contract", contract);
 
       let userList = [];
 
+      console.log("nawaooo");
+
       const staffAddrrArray = await contract.getAllRegisteredAddress();
       // const staffAddrCount = await contract.userAddsressCount();
-      // console.log("staffAddrrArray", staffAddrrArray);
+      console.log("staffAddrrArray", staffAddrrArray);
 
       for (let i = 0; i < staffAddrrArray.length; i++) {
         const staffAddress = staffAddrrArray[i];
@@ -281,13 +266,17 @@ export const ManagementProvider = ({ children }) => {
 
       let rolesList = [];
 
-      const roleCounts = await contract.roleCount();
+      const roleCounts = await contract.taskCount();
       // const staffAddrCount = await contract.userAddsressCount();
-      console.log("roleCounts", roleCounts);
+      console.log("taskCount", roleCounts);
 
       for (let i = 1; i <= roleCounts; i++) {
-        const role = await contract.getRoleDetails(i);
-        rolesList.push(role);
+        const role = await contract.gettaskDetails(i);
+        const roleWithId = {
+          ...role,
+          taskId: i,
+        };
+        rolesList.push(roleWithId);
       }
 
       console.log("rolesList", rolesList);
@@ -306,28 +295,30 @@ export const ManagementProvider = ({ children }) => {
 
       console.log("contract", contract);
 
-      let staffRolesList = [];
+      let staffTaskList = [];
 
       const staffProfileDetails = await contract.getStaffDetails(staffAddress);
 
       console.log("staffProfileDetails", staffProfileDetails);
 
-      const staffRoleIdArray = staffProfileDetails.roleIds;
-      console.log("staffRoleIdArray", staffRoleIdArray);
+      // const staffRoleIdArray = staffProfileDetails.taskIds.length;
+      // console.log("staffRoleIdArray", staffRoleIdArray);
 
       // const staffAddrCount = await contract.userAddsressCount();
       // console.log("roleCounts", roleCounts);
 
       //using the lenght of the staffId array to get each
-      for (let i = 0; i < staffRoleIdArray.length; i++) {
-        const role = await contract.getRoleDetails(staffRoleIdArray[i]);
-        staffRolesList.push(role);
+      for (let i = 1; i <= staffProfileDetails.taskIds.length; i++) {
+        const task = await contract.gettaskDetails(i);
+        console.log("task", task);
+
+        staffTaskList.push(task);
       }
 
-      console.log("staffRolesList", staffRolesList);
-      setstaffRoleList(staffRolesList);
+      console.log("staffTaskList", staffTaskList);
+      setstaffRoleList(staffTaskList);
 
-      return staffRolesList;
+      return staffTaskList;
     } catch (error) {
       console.log("Error in getting a single staff roles");
     }
@@ -388,10 +379,10 @@ export const ManagementProvider = ({ children }) => {
 
       const staffProfileDetails = await contract.getStaffDetails(staffAddress);
 
-      console.log("staffProfileDetails", staffProfileDetails);
+      // console.log("staffProfileDetails", staffProfileDetails);
       staffProfileDetail.push(staffProfileDetails);
 
-      console.log("staffProfileDetail", staffProfileDetail);
+      // console.log("staffProfileDetail", staffProfileDetail);
       setSetStaff(staffProfileDetail);
 
       // setsetStaff(staffProfileDetails);
@@ -399,6 +390,94 @@ export const ManagementProvider = ({ children }) => {
       return staffProfileDetails;
     } catch (error) {
       console.log("Error in getting single staff profile");
+    }
+  };
+
+  const getBalanceOfMintedToken = async () => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+
+      const token = new ethers.Contract(
+        companyTokenContract,
+        companyTokenAbi,
+        signer
+      );
+
+      const tokenDecimals = await token.decimals();
+
+      const tokenBalanceMinted = await token.balanceOf(
+        companyManagementContract
+      );
+
+      const readableBalance = ethers.utils.formatUnits(
+        tokenBalanceMinted,
+        tokenDecimals
+      );
+
+      console.log("Token balance minted", readableBalance);
+
+      return readableBalance;
+    } catch (error) {
+      console.log("Error in getting balance of minted token");
+    }
+  };
+
+  getBalanceOfMintedToken();
+
+  const StatusChange = async (taskId, newStatus) => {
+    if (newStatus == "") {
+      return null;
+    }
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      const updatedStatus = await contract.updateTaskStatusByManagerOrStaff(
+        taskId,
+        newStatus
+      );
+
+      updatedStatus.wait();
+
+      window.location.reload();
+    } catch (error) {
+      console.log("Error in changing status");
+    }
+  };
+  const signAttendance = async () => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      const attendance = await contract.signAttendance();
+
+      attendance.wait();
+
+      window.location.reload();
+
+      console.log("Attendance signed");
+    } catch (error) {
+      console.log("Error in Signing Attendance");
+    }
+  };
+
+  const setAttendanceTokenReward = async (attendanceTokenReward) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      const attendance = await contract.setAttendanceReward();
+
+      attendance.wait();
+
+      console.log("Attendance token reward set");
+      window.location.reload();
+    } catch (error) {
+      console.log("Error in setting attendance token reward");
     }
   };
 
@@ -423,8 +502,11 @@ export const ManagementProvider = ({ children }) => {
         Staffdetails,
         textName,
         staffList,
-        staffRoleList,
+        staffTaskList,
         getAstaffRole,
+        StatusChange,
+        signAttendance,
+        setAttendanceTokenReward,
       }}
     >
       {children}

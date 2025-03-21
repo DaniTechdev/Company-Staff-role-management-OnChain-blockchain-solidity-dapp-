@@ -20,6 +20,7 @@ contract CompanyManagement {
         address staffAddress;
         string gender;
         bool isRegistered;
+        uint256 lastCheckin;
     }
 
     struct Task {
@@ -32,6 +33,7 @@ contract CompanyManagement {
         uint256 rejectedAt;
         uint256 completedAt;
         address taskAssignedTo;
+        string taskAssignedToName;
     }
 
     mapping(address => Staff) public staffList;
@@ -74,7 +76,8 @@ contract CompanyManagement {
             registeredAt: block.timestamp,
             staffAddress: staffAddress,
             gender: gender,
-            isRegistered: true
+            isRegistered: true,
+            lastCheckin:0
         });
         registeredStaffAddress.push(staffAddress);
         emit StaffRegistered(staffAddress, name);
@@ -100,7 +103,8 @@ contract CompanyManagement {
             reviewAt: 0,
             rejectedAt: 0,
             completedAt: 0,
-            taskAssignedTo: staffAddress
+            taskAssignedTo: staffAddress,
+            taskAssignedToName:staffList[staffAddress].name
         });
         staffList[staffAddress].taskIds.push(taskCount);
 
@@ -112,6 +116,14 @@ contract CompanyManagement {
     // Staff signs attendance and earns tokens
     function signAttendance() public {
         require(staffList[msg.sender].isRegistered, "Not a registered staff");
+        if(staffList[msg.sender].lastCheckin == 0){
+            staffList[msg.sender].lastCheckin = block.timestamp;
+        }else{
+            // require(block.timestamp - staffList[msg.sender].lastCheckin >= 1 days, "You can only checkin once a day");
+            require(block.timestamp >= staffList[msg.sender].lastCheckin + 24 hours,"You can only checkin once a day");
+            staffList[msg.sender].lastCheckin = block.timestamp;
+        }
+
         staffList[msg.sender].tokensEarned += tokenRewardPerAttendance;
 
         uint256 tokenRewardPerAttendanceInBasedUnit = tokenRewardPerAttendance * (10 ** tokenDecimals);
@@ -157,5 +169,33 @@ contract CompanyManagement {
         // Transfer tokens from this contract to the staff
         token.transfer(msg.sender, amountInBasegwei);
         emit Payout(msg.sender, amount);
+    }
+
+
+
+
+    
+    // Get details of a staff member by the manager
+    function getStaffDetails(address staffAddress) public view returns (Staff memory) {
+        require(staffList[staffAddress].isRegistered,"Address is not registered");
+        return staffList[staffAddress];
+    }
+
+    // Get details of a task
+    function gettaskDetails(uint256 taskId) public view returns (Task memory) {
+        return tasks[taskId]; 
+    }
+
+    // Get all signals for a task
+    // function getSignalsFortask(uint256 taskId) public view returns (Signal[] memory) {
+    //     return taskSignals[taskId];
+    // }
+
+    function getAllRegisteredAddress() public view returns (address[] memory){
+        return  registeredStaffAddress;
+    }
+
+    function setAttendanceReward(uint256 _tokenRewardPerAttendance) public onlyManager {
+        tokenRewardPerAttendance = _tokenRewardPerAttendance;
     }
 }

@@ -53,9 +53,9 @@
   /* border: 1px solid black; */
 }
 
-/* .table_th_mdremove {
-    display: none;
-  } */
+.table_th_mdremove {
+  display: none;
+}
 .table_th {
   border: 1px solid rgb(88, 87, 87);
   padding: 5px;

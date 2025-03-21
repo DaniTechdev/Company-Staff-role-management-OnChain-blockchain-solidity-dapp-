@@ -2,10 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 
 //Internal Import
 // import Style from "../../Components/Card/Style.module.css";
-import Style from "./Staff.module.css";
+import Style from "./Staffcopy.module.css";
 import { ManagementContext } from "../../context/ManagementContext";
 
-const Staffcard = ({ staffDataU }) => {
+const StaffcardCopy = ({ staffDataU }) => {
   function convertTime(timestamp) {
     const date = new Date(timestamp); // Create a new Date object from the timestamp
 
@@ -32,6 +32,7 @@ const Staffcard = ({ staffDataU }) => {
     Staffdetails,
     staffList,
     textName,
+    signAttendance,
   } = useContext(ManagementContext);
 
   console.log("CURRENT ACCOUTN", currentAccount);
@@ -69,10 +70,10 @@ const Staffcard = ({ staffDataU }) => {
             <th className={Style.table_th}>Unique ID</th>
             <th className={Style.table_th}>Staff name</th>
             <th className={Style.table_th}>Earned Token</th>
-            <th className={Style.table_th}>staff address</th>
+            {/* <th className={Style.table_th}>staff address</th> */}
             <th className={Style.table_th_mdremove}>gender</th>
-            <th className={Style.table_th}>Task count</th>
-            <th className={Style.table_th}></th>
+            {/* <th className={Style.table_th}>Task count</th> */}
+            <th className={Style.table_th}>Attendance</th>
           </tr>
         </thead>
         <tbody>
@@ -89,17 +90,19 @@ const Staffcard = ({ staffDataU }) => {
                 <td className={Style.table_th}>
                   <p>{staff.tokensEarned.toNumber()}</p>
                 </td>
-                <td className={Style.table_th}>
+                {/* <td className={Style.table_th}>
                   <p>{staff.staffAddress.slice(0, 9)}...</p>
-                </td>
+                </td> */}
                 <td className={Style.table_th_mdremove}>
                   <p>{staff.gender}</p>
                 </td>
-                <td className={Style.table_th}>
+                {/* <td className={Style.table_th}>
                   <p>{staff.taskIds.length}</p>
-                </td>
+                </td> */}
                 <td className={Style.table_th}>
-                  <button>See details</button>
+                  <button onClick={() => signAttendance()}>
+                    Sign Attendance
+                  </button>
                 </td>
               </tr>
             );
@@ -112,4 +115,4 @@ const Staffcard = ({ staffDataU }) => {
   );
 };
 
-export default Staffcard;
+export default StaffcardCopy;
