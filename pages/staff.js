@@ -10,6 +10,7 @@ import Staffcard from "../Components/StaffCard/Staffcard";
 import StaffRole from "../Components/Staff/StaffRole";
 import RoleTable from "../Components/RoleForm/RoleTable/RoleTable";
 import StaffcardCopy from "../Components/StaffCard/StaffcardCopy";
+import Payout from "../Components/Payout/Payout";
 
 const staff = () => {
   const [tab, setTab] = useState("");
@@ -135,7 +136,7 @@ const staff = () => {
               attendanReward={attendanReward}
             />
           )}
-          {tab == "withdraw" && <h1>Hello</h1>}
+          {tab == "withdraw" && <Payout withdrawal={withdrawal} />}
         </div>
 
         {openHandburger ? (

@@ -533,12 +533,12 @@ export const ManagementProvider = ({ children }) => {
       const contract = fetchContract(signer);
 
       if (partPayout > 0) {
-        const attendance = await contract.payoutInPart(partPayout);
+        const Partpayment = await contract.payoutInPart(partPayout);
         console.log("part withdrawal successful");
 
         window.location.reload();
       } else if (partPayout == "partPayment") {
-        const attendance = await contract.requestPayout();
+        const Fullpayment = await contract.requestPayout();
         console.log("complete withdrawal request successfull");
 
         window.location.reload();
