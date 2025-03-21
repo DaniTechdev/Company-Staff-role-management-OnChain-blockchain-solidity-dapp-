@@ -5,7 +5,7 @@ import React, { useEffect, useState, useContext } from "react";
 import Style from "./Staffcopy.module.css";
 import { ManagementContext } from "../../context/ManagementContext";
 
-const StaffcardCopy = ({ staffDataU }) => {
+const StaffcardCopy = ({ staffDataU, attendanReward }) => {
   function convertTime(timestamp) {
     const date = new Date(timestamp); // Create a new Date object from the timestamp
 
@@ -64,6 +64,10 @@ const StaffcardCopy = ({ staffDataU }) => {
 
   return (
     <div className={Style.container}>
+      <h3>
+        Reward for attendance in each 24hours: {""} {attendanReward?.toNumber()}{" "}
+        CTK Token
+      </h3>
       <table>
         <thead>
           <tr>

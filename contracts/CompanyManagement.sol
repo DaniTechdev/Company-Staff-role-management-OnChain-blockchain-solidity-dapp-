@@ -11,6 +11,8 @@ contract CompanyManagement {
     address[] public registeredStaffAddress;
     CompanyToken public token; // Reference to the token contract
     uint256 public tokenDecimals;
+    uint256 public tokenMintedSupply;
+
 
     struct Staff {
         string name;
@@ -34,6 +36,15 @@ contract CompanyManagement {
         uint256 completedAt;
         address taskAssignedTo;
         string taskAssignedToName;
+    }
+
+
+    Struct tokenDetails{
+        string tokenName;
+        string tokenSymbol;
+        uint256 tokenDecimals;
+        uint256 tokenWithdrawableBalance;
+        
     }
 
     mapping(address => Staff) public staffList;
@@ -93,6 +104,8 @@ contract CompanyManagement {
 
          uint256 tokenRewardIngwei = tokenReward * (10 ** tokenDecimals);
         taskCount++;
+
+        tokenMintedSupply = tokenMintedSupply + tokenReward;
         
         tasks[taskCount] = Task({
             taskName: taskName,
@@ -125,6 +138,8 @@ contract CompanyManagement {
         }
 
         staffList[msg.sender].tokensEarned += tokenRewardPerAttendance;
+        tokenMintedSupply = tokenMintedSupply + tokenRewardPerAttendance;
+
 
         uint256 tokenRewardPerAttendanceInBasedUnit = tokenRewardPerAttendance * (10 ** tokenDecimals);
 
@@ -197,5 +212,13 @@ contract CompanyManagement {
 
     function setAttendanceReward(uint256 _tokenRewardPerAttendance) public onlyManager {
         tokenRewardPerAttendance = _tokenRewardPerAttendance;
+    }
+
+    function getAttendanceReward () public view returns(uint256){
+        return tokenRewardPerAttendance;
+    }
+
+    function getTotalMintedToken() public view returns(uint256){
+        return tokenMintedSupply;
     }
 }

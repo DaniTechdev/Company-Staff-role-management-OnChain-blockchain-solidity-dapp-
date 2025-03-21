@@ -1,9 +1,9 @@
 export const buttons = [
   { label: "Register Staff", index: 1 },
   { label: "Staff details", index: 2 },
-  { label: "Assign Task", index: 3 },
+  { label: "Task Details/Asign Task", index: 3 },
   { label: "Attendance", index: 4 },
-  { label: "Total Task token rewarded", index: 5 },
+  { label: "Reward Token Details", index: 5 },
   { label: "Total Attendance token rewarded", index: 6 },
 ];
 

@@ -20,11 +20,14 @@ const manager = () => {
   const [openHandburger, setopenHandburger] = useState(false);
   const [allStaffData, setallStaffData] = useState();
   const [allStaffRoles, setallStaffRoles] = useState();
+  const [AttendanceRewaard, setAttendanceRewaard] = useState();
   // console.log("openHandburger Clicked", openHandburger);
 
   console.log("allStaffRoles", allStaffRoles);
 
   console.log("All staff Data", allStaffData);
+
+  console.log("AttendanceRewaard", AttendanceRewaard);
 
   const handleIndex = (index) => {
     setindex(index);
@@ -35,19 +38,23 @@ const manager = () => {
   useEffect(() => {
     const getStaffData = getAllregStaff();
     const allStaffRole = getAllRoles();
+    const attendanceReward = getAttendanceReward();
 
     console.log("getStaffData", getStaffData);
     console.log("allStaffRole", allStaffRole);
+    // console.log("attendanceReward", attendanceReward);
 
     // console.log("Get all getCampaignsData", getStaffData);
 
     return async () => {
       const allRoleData = await allStaffRole;
       const allData = await getStaffData;
+      const allAttendReward = attendanceReward;
       setallStaffRoles(allRoleData);
       setallStaffData(allData);
+      // setAttendanceRewaard(allAttendReward);
     };
-  }, []);
+  }, [index]);
 
   const {
     checkIfWalletIsConnected,
@@ -61,6 +68,8 @@ const manager = () => {
     getAllRoles,
     StatusChange,
     setAttendanceTokenReward,
+    getAttendanceReward,
+    attendanReward,
   } = useContext(ManagementContext);
 
   useEffect(() => {
@@ -119,8 +128,13 @@ const manager = () => {
             StatusChange={StatusChange}
           />
         )}
+
+        {index == 5 && <h1>This is token details page</h1>}
         {index == 4 && (
-          <Attendance setAttendanceTokenReward={setAttendanceTokenReward} />
+          <Attendance
+            setAttendanceTokenReward={setAttendanceTokenReward}
+            attendanReward={attendanReward}
+          />
         )}
       </div>
 

@@ -42,6 +42,7 @@ export const ManagementProvider = ({ children }) => {
   const [Staffdetails, setsetStaff] = useState();
   const [staffList, setSetStaff] = useState();
   const [staffTaskList, setstaffRoleList] = useState();
+  const [attendanReward, setattendanReward] = useState();
 
   const [tokenContract, setTokenContract] = useState(null);
   const [managementContract, setManagementContract] = useState(null);
@@ -393,7 +394,7 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
-  const getBalanceOfMintedToken = async () => {
+  const getTokenDetails = async () => {
     try {
       const provider = await providerSigner();
       const signer = provider.getSigner();
@@ -405,6 +406,7 @@ export const ManagementProvider = ({ children }) => {
       );
 
       const tokenDecimals = await token.decimals();
+      const tokenSymbol = await token.tokenSymbol();
 
       const tokenBalanceMinted = await token.balanceOf(
         companyManagementContract
@@ -415,15 +417,26 @@ export const ManagementProvider = ({ children }) => {
         tokenDecimals
       );
 
-      console.log("Token balance minted", readableBalance);
+      const contract = fetchContract(signer);
+      const totalTokenMintedBaseUnit = await contract.getTotalMintedToken();
 
-      return readableBalance;
+      const totalTokenMintedSupply = totalTokenMintedBaseUnit.toNumber();
+
+      const tokenDetails = {
+        tokenSymbol: tokenSymbol,
+        withdrawableBalance: readableBalance,
+        tokenTotalMintedSupply: totalTokenMintedSupply,
+      };
+
+      console.log("tokenDetails", tokenDetails);
+
+      return tokenDetails;
     } catch (error) {
       console.log("Error in getting balance of minted token");
     }
   };
 
-  getBalanceOfMintedToken();
+  getTokenDetails();
 
   const StatusChange = async (taskId, newStatus) => {
     if (newStatus == "") {
@@ -465,12 +478,16 @@ export const ManagementProvider = ({ children }) => {
   };
 
   const setAttendanceTokenReward = async (attendanceTokenReward) => {
+    if (!attendanceTokenReward) return;
+    if (attendanceTokenReward <= 0) return;
+
+    const amountNumber = Number(attendanceTokenReward);
     try {
       const provider = await providerSigner();
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      const attendance = await contract.setAttendanceReward();
+      const attendance = await contract.setAttendanceReward(amountNumber);
 
       attendance.wait();
 
@@ -481,6 +498,23 @@ export const ManagementProvider = ({ children }) => {
     }
   };
 
+  const getAttendanceReward = async () => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      const attendanceReward = await contract.getAttendanceReward();
+
+      console.log("attendanceReward", attendanceReward);
+      setattendanReward(attendanceReward);
+
+      return attendanceReward;
+    } catch (error) {
+      console.log("Error in getting attendance token reward");
+    }
+  };
+  // getAttendanceReward();
   const textName = "My name is NATOCHI";
   return (
     <ManagementContext.Provider
@@ -507,6 +541,9 @@ export const ManagementProvider = ({ children }) => {
         StatusChange,
         signAttendance,
         setAttendanceTokenReward,
+        getAttendanceReward,
+        attendanReward,
+        getTokenDetails,
       }}
     >
       {children}

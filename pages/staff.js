@@ -39,6 +39,8 @@ const staff = () => {
     getAstaffRole,
     textName,
     signAttendance,
+    attendanReward,
+    getAttendanceReward,
   } = useContext(ManagementContext);
 
   console.log("CURRENT ACCOUTN", currentAccount);
@@ -53,6 +55,7 @@ const staff = () => {
 
     const getStaffData = getSingleStaffProfile(currentAccount);
     const getStaffRole = getAstaffRole(currentAccount);
+    const attendanceReward = getAttendanceReward();
 
     // console.log("getStaffData", getStaffData);
     // setStaffData(getStaffData);
@@ -115,6 +118,11 @@ const staff = () => {
               Sign Attendance
             </button>
           </div>
+          <div className={Style.leftbarBtnContainer}>
+            <button onClick={() => setTab("withdraw")}>
+              Withdraw Reward Token
+            </button>
+          </div>
         </div>
         <div className={Style.rightbar}>
           {tab === "profile" && <Staffcard staffDataU={staffList} />}
@@ -123,8 +131,10 @@ const staff = () => {
             <StaffcardCopy
               staffDataU={staffList}
               signAttendance={signAttendance}
+              attendanReward={attendanReward}
             />
           )}
+          {tab == "withdraw" && <h1>Hello</h1>}
         </div>
 
         {openHandburger ? (
