@@ -41,6 +41,7 @@ const staff = () => {
     signAttendance,
     attendanReward,
     getAttendanceReward,
+    withdrawal,
   } = useContext(ManagementContext);
 
   console.log("CURRENT ACCOUTN", currentAccount);

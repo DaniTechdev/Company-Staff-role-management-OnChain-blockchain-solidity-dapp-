@@ -1,6 +1,8 @@
 //Internal import
-import ManagementJson from "./CompanyManagement.json";
-import TokenJson from "./CompanyToken.json";
+// import ManagementJson from "./CompanyManagement.json";
+import ManagementJson from "../artifacts/contracts/CompanyManagement.sol/CompanyManagement.json";
+// import TokenJson from "./CompanyToken.json";
+import TokenJson from "../artifacts/contracts/CompanyToken.sol/CompanyToken.json";
 
 export const managerAccount = process.env.MANAGERADDRESS;
 

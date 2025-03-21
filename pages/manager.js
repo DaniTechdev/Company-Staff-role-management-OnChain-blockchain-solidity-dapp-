@@ -14,6 +14,7 @@ import Forms from "../Components/Form/Form";
 import Card from "../Components/Card/Card";
 import RoleForm from "../Components/RoleForm/RoleForm";
 import Attendance from "../Components/Attendance/Attendance";
+import TokenDetails from "../Components/TokenDetails/TokenDetails";
 
 const manager = () => {
   const [index, setindex] = useState(null);
@@ -39,6 +40,7 @@ const manager = () => {
     const getStaffData = getAllregStaff();
     const allStaffRole = getAllRoles();
     const attendanceReward = getAttendanceReward();
+    const tokenDetails = getTokenDetails();
 
     console.log("getStaffData", getStaffData);
     console.log("allStaffRole", allStaffRole);
@@ -70,6 +72,8 @@ const manager = () => {
     setAttendanceTokenReward,
     getAttendanceReward,
     attendanReward,
+    getTokenDetails,
+    tokenDetails,
   } = useContext(ManagementContext);
 
   useEffect(() => {
@@ -129,13 +133,13 @@ const manager = () => {
           />
         )}
 
-        {index == 5 && <h1>This is token details page</h1>}
         {index == 4 && (
           <Attendance
             setAttendanceTokenReward={setAttendanceTokenReward}
             attendanReward={attendanReward}
           />
         )}
+        {index == 5 && <TokenDetails tokenDetails={tokenDetails} />}
       </div>
 
       {/* MOBILE VIEW */}

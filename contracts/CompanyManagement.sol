@@ -39,13 +39,6 @@ contract CompanyManagement {
     }
 
 
-    Struct tokenDetails{
-        string tokenName;
-        string tokenSymbol;
-        uint256 tokenDecimals;
-        uint256 tokenWithdrawableBalance;
-        
-    }
 
     mapping(address => Staff) public staffList;
     mapping(uint256 => Task) public tasks;
@@ -55,6 +48,7 @@ contract CompanyManagement {
     event TokensDistributed(address staffAddress, uint256 amount);
     event TaskStatusUpdatedByManagerOrStaff(uint256 taskId, string newStatus);
     event Payout(address staffAddress, uint256 amount);
+    event payOutInPart(address staffAddress, uint256 partAmount);
 
     modifier onlyManager() {
         require(msg.sender == manager, "Only manager can call this function");
@@ -179,11 +173,32 @@ contract CompanyManagement {
         uint amountInBasegwei = amount * (10 ** tokenDecimals);
 
         // Reset earned tokens
-        staffList[msg.sender].tokensEarned = 0;
+        staffList[msg.sender].tokensEarned = 0; //to prevent reentrancy attack or recurssive function call
 
         // Transfer tokens from this contract to the staff
         token.transfer(msg.sender, amountInBasegwei);
         emit Payout(msg.sender, amount);
+    }
+
+
+    //staff request payout by part
+    function payoutInPart(uint256 partAmount) public {
+        require(staffList[msg.sender].isRegistered, "Not registered");
+
+        require(partAmount> 0,"Insufficient token to withdraw");
+
+        require( staffList[msg.sender].tokensEarned > partAmount,"Requested withdrawal amount exceeds balance");
+
+              // Reset earned tokens ////to prevent reentrancy attack or recurssive function call
+        staffList[msg.sender].tokensEarned  =  staffList[msg.sender].tokensEarned - partAmount;
+
+        //convert to base unit
+        uint256 partAmountInBasewei = partAmount * (10**tokenDecimals);
+        token.transfer(msg.sender,partAmountInBasewei);
+        
+        emit payOutInPart(msg.sender, partAmount);
+
+
     }
 
 

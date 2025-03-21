@@ -43,6 +43,7 @@ export const ManagementProvider = ({ children }) => {
   const [staffList, setSetStaff] = useState();
   const [staffTaskList, setstaffRoleList] = useState();
   const [attendanReward, setattendanReward] = useState();
+  const [tokenDetails, settokenDetails] = useState({});
 
   const [tokenContract, setTokenContract] = useState(null);
   const [managementContract, setManagementContract] = useState(null);
@@ -406,37 +407,47 @@ export const ManagementProvider = ({ children }) => {
       );
 
       const tokenDecimals = await token.decimals();
-      const tokenSymbol = await token.tokenSymbol();
+
+      console.log("tokenDecimals", tokenDecimals);
+
+      // const tokenSymbol = await token.tokenSymbol();
+
+      // console.log("tokenSymbol", tokenSymbol);
 
       const tokenBalanceMinted = await token.balanceOf(
         companyManagementContract
       );
+
+      console.log("tokenBalanceMinted", tokenBalanceMinted);
 
       const readableBalance = ethers.utils.formatUnits(
         tokenBalanceMinted,
         tokenDecimals
       );
 
+      console.log("readableBalance", readableBalance);
+
       const contract = fetchContract(signer);
       const totalTokenMintedBaseUnit = await contract.getTotalMintedToken();
 
       const totalTokenMintedSupply = totalTokenMintedBaseUnit.toNumber();
 
+      console.log("totalTokenMintedSupply", totalTokenMintedSupply);
+
       const tokenDetails = {
-        tokenSymbol: tokenSymbol,
+        // tokenSymbol: tokenSymbol,
         withdrawableBalance: readableBalance,
         tokenTotalMintedSupply: totalTokenMintedSupply,
       };
 
       console.log("tokenDetails", tokenDetails);
+      settokenDetails(tokenDetails);
 
       return tokenDetails;
     } catch (error) {
-      console.log("Error in getting balance of minted token");
+      console.log("Error in getting token datails");
     }
   };
-
-  getTokenDetails();
 
   const StatusChange = async (taskId, newStatus) => {
     if (newStatus == "") {
@@ -514,6 +525,28 @@ export const ManagementProvider = ({ children }) => {
       console.log("Error in getting attendance token reward");
     }
   };
+
+  const withdrawal = async (partPayout) => {
+    try {
+      const provider = await providerSigner();
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      if (partPayout > 0) {
+        const attendance = await contract.payoutInPart(partPayout);
+        console.log("part withdrawal successful");
+
+        window.location.reload();
+      } else if (partPayout == "partPayment") {
+        const attendance = await contract.requestPayout();
+        console.log("complete withdrawal request successfull");
+
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log("Error in placing withdrawal");
+    }
+  };
   // getAttendanceReward();
   const textName = "My name is NATOCHI";
   return (
@@ -544,6 +577,8 @@ export const ManagementProvider = ({ children }) => {
         getAttendanceReward,
         attendanReward,
         getTokenDetails,
+        tokenDetails,
+        withdrawal,
       }}
     >
       {children}
