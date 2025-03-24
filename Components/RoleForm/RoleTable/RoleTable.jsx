@@ -2,16 +2,16 @@ import React, { useState } from "react";
 
 // Internal import
 import Style from "./RoleTable.module.css";
+import RoleDataModal from "./RoleDataModal";
 
 // Internal import
 // import { roleData } from "../../constantData"; // Assuming RoleData is imported from constantData
 
 const RoleTable = ({ roleData, StatusChange }) => {
-  const [newStatus, setNewStatus] = useState("");
   const [taskId, setTaskId] = useState("");
+  const [openStatusModal, setopenStatusModal] = useState(false);
 
   console.log("taskId", taskId);
-  console.log("newStatus", newStatus);
 
   return (
     <div className={Style.tableDiv}>
@@ -53,24 +53,18 @@ const RoleTable = ({ roleData, StatusChange }) => {
                   <p>{role.status}</p>
                 </td>
                 <td className={Style.table_th}>
-                  <p className={Style.action}>
-                    <select
-                      name=""
-                      id=""
-                      onChange={(e) => setNewStatus(e.target.value)}
-                    >
-                      <option value="">select</option>
-                      <option value="inProgress">InProgress</option>
-                      <option value="review">Review</option>
-                      <option value="rejected">Reject</option>
-                      <option value="Completed">Completed</option>
-                    </select>
+                  {role.status == "Completed" ? (
+                    <input className={Style.checkBox} type="checkbox" checked />
+                  ) : (
                     <button
-                      onClick={() => StatusChange(role.taskId, newStatus)}
+                      className={Style.statusBtn}
+                      onClick={() => (
+                        setopenStatusModal(true), setTaskId(role.taskId)
+                      )}
                     >
-                      Submit
+                      Change Status
                     </button>
-                  </p>
+                  )}
                 </td>
                 <td className={Style.table_th}>
                   <p>{role.tokenReward.toNumber()}</p>
@@ -92,6 +86,14 @@ const RoleTable = ({ roleData, StatusChange }) => {
           })}
         </tbody>
       </table>
+
+      {openStatusModal && (
+        <RoleDataModal
+          setopenStatusModal={setopenStatusModal}
+          StatusChange={StatusChange}
+          taskId={taskId}
+        />
+      )}
     </div>
   );
 };

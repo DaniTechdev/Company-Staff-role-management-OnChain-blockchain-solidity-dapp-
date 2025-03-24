@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 
 //Internal import
 import Style from "./Staffrole.module.css";
+import RoleDataModal from "./RoleDataModal";
 
-const StaffRole = ({ roleData }) => {
+const StaffRole = ({ roleData, StatusChange }) => {
+  const [taskId, setTaskId] = useState("");
+  const [openStatusModal, setopenStatusModal] = useState(false);
+
+  console.log("taskId", taskId);
+
   return (
     <div className={Style.tableDiv}>
       <table>
@@ -46,7 +52,20 @@ const StaffRole = ({ roleData }) => {
                   <p>{task.tokenReward.toNumber()}</p>
                 </td>
                 <td className={Style.table_th}>
-                  <p>Actions options</p>
+                  {task.status == "Completed" ? (
+                    <input className={Style.checkBox} type="checkbox" checked />
+                  ) : task.status == "review" ? (
+                    <button className={Style.statusBtn}>Review</button>
+                  ) : (
+                    <button
+                      className={Style.statusBtn}
+                      onClick={() => (
+                        setopenStatusModal(true), setTaskId(task.taskId)
+                      )}
+                    >
+                      Accept Task
+                    </button>
+                  )}
                 </td>
                 <td className={Style.table_th_mdremove}>
                   <p>{createdAt}</p>
@@ -65,6 +84,13 @@ const StaffRole = ({ roleData }) => {
           })}
         </tbody>
       </table>
+      {openStatusModal && (
+        <RoleDataModal
+          setopenStatusModal={setopenStatusModal}
+          StatusChange={StatusChange}
+          taskId={taskId}
+        />
+      )}
     </div>
   );
 };

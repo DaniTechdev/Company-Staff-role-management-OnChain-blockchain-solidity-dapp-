@@ -312,9 +312,14 @@ export const ManagementProvider = ({ children }) => {
       //using the lenght of the staffId array to get each
       for (let i = 1; i <= staffProfileDetails.taskIds.length; i++) {
         const task = await contract.gettaskDetails(i);
-        console.log("task", task);
 
-        staffTaskList.push(task);
+        const taskObjId = {
+          ...task,
+          taskId: i,
+        };
+        console.log("taskObjId", taskObjId);
+
+        staffTaskList.push(taskObjId);
       }
 
       console.log("staffTaskList", staffTaskList);
@@ -537,7 +542,7 @@ export const ManagementProvider = ({ children }) => {
         console.log("part withdrawal successful");
 
         window.location.reload();
-      } else if (partPayout == "partPayment") {
+      } else if (partPayout == "fullPayment") {
         const Fullpayment = await contract.requestPayout();
         console.log("complete withdrawal request successfull");
 

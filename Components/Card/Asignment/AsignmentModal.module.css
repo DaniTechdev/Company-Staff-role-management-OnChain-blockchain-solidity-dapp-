@@ -1,0 +1,139 @@
+.formContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(22, 22, 22, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+}
+
+.formDiv {
+  position: relative;
+  width: 60%;
+  padding: 15px;
+  /* padding: 4px; */
+  background-color: rgb(239, 233, 233);
+  height: fit-content;
+  border-radius: 5px;
+}
+
+.formDiv p {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: red;
+  color: rgb(32, 31, 31);
+  /* margin-top: 10px; */
+}
+
+.formDiv form {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.formGroup {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+}
+
+.formGroup label {
+  width: 30%;
+  padding: 6px;
+  font-size: 12px;
+  text-align: center;
+  background-color: rgb(100, 97, 98);
+  padding: 6px;
+}
+.formGroup_m {
+  display: flex;
+  width: 100%;
+  padding: 6px;
+}
+.formGroup_m label {
+  width: 30%;
+  padding: 2px;
+  background-color: rgb(80, 78, 78);
+  text-align: center;
+}
+
+.formGroup input {
+  width: 70%;
+  padding: 5px;
+  outline: none;
+}
+
+.formGroup_m input {
+  width: 70%;
+  outline: none;
+}
+
+.formDiv form button {
+  width: 90%;
+  background-color: green;
+  color: white;
+  padding: 8px;
+}
+@media screen and (max-width: 426px) {
+  .formDiv {
+    position: relative;
+    width: 80%;
+    padding: 5px;
+    background-color: rgb(68, 65, 65);
+    height: fit-content;
+  }
+
+  .formGroup {
+    display: flex;
+    width: 90%;
+    gap: 6px;
+  }
+
+  .formGroup label {
+    width: 30%;
+    padding: 6px;
+    font-size: 8px;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  .formGroup input::placeholder {
+    font-size: 6px;
+  }
+
+  .formGroup_m {
+    display: flex;
+    width: 90%;
+    gap: 6px;
+  }
+  .formGroup_m label {
+    width: 30%;
+    padding: 6px;
+    font-size: 8px;
+  }
+  .formGroup_m input {
+    width: 70%;
+    font-size: 7px;
+    border-radius: 4px;
+  }
+
+  .formDiv button {
+    width: 70%;
+  }
+
+  /* .formGroup_m input::placeholder {
+    font-size: 6px;
+  } */
+}

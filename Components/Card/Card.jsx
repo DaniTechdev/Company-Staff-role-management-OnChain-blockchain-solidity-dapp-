@@ -3,9 +3,14 @@ import Image from "next/image";
 
 //Internal import
 import Style from "./Style.module.css";
+import AsignmentModal from "./Asignment/AsignmentModal";
 
-const Card = ({ StaffData, allStaffData }) => {
+const Card = ({ StaffData, allStaffData, asynRoleToStaff }) => {
   const [Modal, setModal] = useState(false);
+  const [asignmentModal, setAsignmentModal] = useState(false);
+  const [currentStaffAddress, setcurrentStaffAddress] = useState();
+
+  console.log("allStaffData", allStaffData);
 
   function convertTime(timestamp) {
     const date = new Date(timestamp); // Create a new Date object from the timestamp
@@ -77,7 +82,15 @@ const Card = ({ StaffData, allStaffData }) => {
                     <p>{staff.taskIds.length}</p>
                   </td>
                   <td className={Style.table_th}>
-                    <button onClick={() => setModal(true)}>Assign Task</button>
+                    <button
+                      onClick={() => (
+                        setModal(true),
+                        setAsignmentModal(true),
+                        setcurrentStaffAddress(staff.staffAddress)
+                      )}
+                    >
+                      Assign Task
+                    </button>
                   </td>
                   <td className={Style.table_th}>
                     <button>See details</button>
@@ -87,7 +100,13 @@ const Card = ({ StaffData, allStaffData }) => {
             })}
           </tbody>
         </table>
-
+        {asignmentModal && (
+          <AsignmentModal
+            asynRoleToStaff={asynRoleToStaff}
+            currentStaffAddress={currentStaffAddress}
+            setAsignmentModal={setAsignmentModal}
+          />
+        )}
         {/* Mobile view */}
       </div>
     </div>

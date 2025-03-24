@@ -1,0 +1,85 @@
+.payContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-top: 30px;
+  gap: 30px;
+  width: 90%;
+}
+
+.btnContainer {
+  display: flex;
+  gap: 20px;
+  width: 80%;
+  justify-content: space-around;
+}
+
+.btnContainer button {
+  padding: 10px;
+  border-radius: 15px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 600;
+  /* background-color: green; */
+  color: white;
+  border: none;
+}
+
+.walletDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(55, 51, 46);
+  color: white;
+  width: 90%;
+  height: 200px;
+  border-radius: 5px;
+}
+
+.btnPArt {
+  background-color: rgb(103, 92, 77);
+}
+.btnFull {
+  background-color: green;
+}
+
+@media screen and (max-width: 426px) {
+  .payContainer {
+    width: 100%;
+  }
+
+  .btnContainer {
+    gap: 10px;
+    width: 90%;
+  }
+
+  .btnContainer button {
+    padding: 10px;
+    border-radius: 15px;
+    width: 100%;
+    font-size: 9px;
+    font-weight: 600;
+    background-color: green;
+    color: white;
+    border: none;
+  }
+
+  .walletDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(55, 51, 46);
+    color: white;
+    width: 80%;
+    height: 100px;
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+}

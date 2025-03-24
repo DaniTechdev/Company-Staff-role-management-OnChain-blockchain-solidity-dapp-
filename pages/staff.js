@@ -43,6 +43,7 @@ const staff = () => {
     attendanReward,
     getAttendanceReward,
     withdrawal,
+    StatusChange,
   } = useContext(ManagementContext);
 
   console.log("CURRENT ACCOUTN", currentAccount);
@@ -128,7 +129,9 @@ const staff = () => {
         </div>
         <div className={Style.rightbar}>
           {tab === "profile" && <Staffcard staffDataU={staffList} />}
-          {tab === "Assigned Tasks" && <StaffRole roleData={staffTaskList} />}
+          {tab === "Assigned Tasks" && (
+            <StaffRole StatusChange={StatusChange} roleData={staffTaskList} />
+          )}
           {tab === "Attendance" && (
             <StaffcardCopy
               staffDataU={staffList}
@@ -152,6 +155,11 @@ const staff = () => {
             <div className={Style.leftbarBtnContainer}>
               <button onClick={() => setTab("Attendance")}>
                 Sign Attendance
+              </button>
+            </div>
+            <div className={Style.leftbarBtnContainer}>
+              <button onClick={() => setTab("withdraw")}>
+                Withdraw Reward
               </button>
             </div>
           </div>

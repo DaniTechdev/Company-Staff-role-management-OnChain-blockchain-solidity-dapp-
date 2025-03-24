@@ -187,7 +187,7 @@ contract CompanyManagement {
 
         require(partAmount> 0,"Insufficient token to withdraw");
 
-        require( staffList[msg.sender].tokensEarned > partAmount,"Requested withdrawal amount exceeds balance");
+        require( staffList[msg.sender].tokensEarned >= partAmount,"Requested withdrawal amount exceeds balance");
 
               // Reset earned tokens ////to prevent reentrancy attack or recurssive function call
         staffList[msg.sender].tokensEarned  =  staffList[msg.sender].tokensEarned - partAmount;
@@ -195,7 +195,7 @@ contract CompanyManagement {
         //convert to base unit
         uint256 partAmountInBasewei = partAmount * (10**tokenDecimals);
         token.transfer(msg.sender,partAmountInBasewei);
-        
+
         emit payOutInPart(msg.sender, partAmount);
 
 

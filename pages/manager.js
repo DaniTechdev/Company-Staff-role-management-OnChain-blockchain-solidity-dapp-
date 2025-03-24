@@ -123,7 +123,11 @@ const manager = () => {
         )}
 
         {index == 2 && (
-          <Card StaffData={StaffData} allStaffData={allStaffData} />
+          <Card
+            StaffData={StaffData}
+            allStaffData={allStaffData}
+            asynRoleToStaff={asynRoleToStaff}
+          />
         )}
         {index == 3 && (
           <RoleForm

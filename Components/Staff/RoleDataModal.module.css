@@ -1,0 +1,91 @@
+.statusModal {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(139, 134, 134, 0.8);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusModal p {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 3px;
+  background-color: red;
+  border-radius: 3px;
+}
+
+.action {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  padding: 40px;
+
+  background-color: rgb(54, 51, 51);
+  height: fit-content;
+  position: relative;
+  border-radius: 5px;
+  gap: 10px;
+}
+
+.action select {
+  width: 70%;
+  outline: none;
+  padding: 10px;
+  font-size: 13px;
+}
+
+.action button {
+  width: 30%;
+  background-color: green;
+  border-radius: 8px;
+  border: none;
+  color: white;
+}
+
+@media screen and (max-width: 426px) {
+  .statusModal {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(139, 134, 134, 0.8);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .statusModal p {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px;
+    background-color: red;
+    border-radius: 3px;
+    font-size: smaller;
+  }
+  .action {
+    width: 60%;
+    padding: 15px;
+    border-radius: 5px;
+    gap: 10px;
+  }
+
+  .action select {
+    width: 50%;
+    padding: 10px;
+    font-size: 10px;
+  }
+
+  .action button {
+    width: 40%;
+    border-radius: 5px;
+    color: white;
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 376px) {
+}
